@@ -16,7 +16,11 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "TentimePlayer",
-            dependencies: []
+                 dependencies: [],
+                 path: "Sources/TentimePlayer",
+                 exclude: ["Tests"],
+                 sources: ["Cache", "Model", "RemoteCommand", "View"],
+                 publicHeadersPath: ""
 ),
       
     ]
