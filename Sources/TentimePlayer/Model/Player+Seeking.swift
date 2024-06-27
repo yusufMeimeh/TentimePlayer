@@ -75,23 +75,27 @@ extension TenTimePlayer {
         }
         let durationSeconds = CMTimeGetSeconds(player.currentItem?.duration ?? CMTimeMake(value: 1, timescale: 1))
         
-        if let playerTimescale = try? await player.currentItem?.asset.load(.duration) {
-            let value = percent * durationSeconds
-            // Extract the CMTimeScale from playerTimescale
-            let timeScale = playerTimescale.timescale
-            let time =  CMTime(seconds: value, preferredTimescale: timeScale)
-            await player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
-            supposedCurrentTime = time
-            if let supposedCurrentTime = supposedCurrentTime {
-                didUpdateTime = (supposedCurrentTime.toDisplayString(),
-                                 self.player?.currentItem?.duration.toDisplayString() ?? "00:00",
-                                 supposedCurrentTime.seconds,
-                                 self.player?.currentItem?.duration.seconds ?? 0.0)
+        if #available(iOS 15, *) {
+            if let playerTimescale = try? await player.currentItem?.asset.load(.duration) {
+                let value = percent * durationSeconds
+                // Extract the CMTimeScale from playerTimescale
+                let timeScale = playerTimescale.timescale
+                let time =  CMTime(seconds: value, preferredTimescale: timeScale)
+                await player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
+                supposedCurrentTime = time
+                if let supposedCurrentTime = supposedCurrentTime {
+                    didUpdateTime = (supposedCurrentTime.toDisplayString(),
+                                     self.player?.currentItem?.duration.toDisplayString() ?? "00:00",
+                                     supposedCurrentTime.seconds,
+                                     self.player?.currentItem?.duration.seconds ?? 0.0)
+                }
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.isSeeking = false
+                }
             }
-
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                self?.isSeeking = false
-            }
+        } else {
+            // Fallback on earlier versions
         }
     }
     

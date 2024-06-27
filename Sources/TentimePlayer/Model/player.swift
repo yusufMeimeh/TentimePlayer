@@ -11,7 +11,7 @@ import AVKit
 import Combine
 import GoogleInteractiveMediaAds
 
-open enum PipModeStatus: Int {
+public enum PipModeStatus: Int {
     case start = 1
     case end = 2
     case restoreUserInterface  = 3
@@ -204,7 +204,7 @@ open class TenTimePlayer: NSObject {
 //                                                  object: player?.currentItem)
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
         if keyPath == #keyPath(AVPictureInPictureController.isPictureInPicturePossible) {
             guard let newValue = change?[NSKeyValueChangeKey.newKey] as? NSNumber else {return}
             let isPictureInPicturePossible: Bool = newValue.boolValue

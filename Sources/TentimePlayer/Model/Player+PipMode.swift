@@ -32,13 +32,13 @@ extension TenTimePlayer {
 
 //MARK: AVPictureInPictureControllerDelegate
 extension TenTimePlayer: AVPictureInPictureControllerDelegate {
-    func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+    public func pictureInPictureControllerDidStartPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
         print("pictureInPictureControllerDidStart: ")
         isPipModeStarted = true
         pipModeStatus = .start
     }
     
-    func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
+    public func pictureInPictureControllerDidStopPictureInPicture(_ pictureInPictureController: AVPictureInPictureController) {
         print("pictureInPictureControllerDidStop: ")
         isPipModeStarted = false
         if pipModeStatus != .restoreUserInterface {
@@ -52,12 +52,12 @@ extension TenTimePlayer: AVPictureInPictureControllerDelegate {
         //        delegate?.didEndPipMode?()
     }
     
-    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, failedToStartPictureInPictureWithError error: Error) {
+    public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, failedToStartPictureInPictureWithError error: Error) {
         print("failedToStartPictureInPicture: ", error.localizedDescription)
         isPipModeStarted = false
     }
     
-    func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
+    public func pictureInPictureController(_ pictureInPictureController: AVPictureInPictureController, restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
         print("restoreUserInterfaceForPictureInPicture: ")
         isCurrentlyPlaying = player?.rate != 0
         if isCurrentlyPlaying {
@@ -66,11 +66,11 @@ extension TenTimePlayer: AVPictureInPictureControllerDelegate {
             pause()
         }
         pipModeStatus = .restoreUserInterface
-        //check how we can change it
-        guard let activeCustomPlayerViewControllers = activeCustomPlayerViewControllers else {return}
-        UIApplication.shared.topmostViewController()?.present(activeCustomPlayerViewControllers, animated: false) {
-            completionHandler(true)
-        }
+//        //check how we can change it
+//        guard let activeCustomPlayerViewControllers = activeCustomPlayerViewControllers else {return}
+//        UIApplication.shared.topmostViewController()?.present(activeCustomPlayerViewControllers, animated: false) {
+//            completionHandler(true)
+//        }
     }
     
  }

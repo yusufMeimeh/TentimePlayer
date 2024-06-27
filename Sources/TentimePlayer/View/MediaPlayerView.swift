@@ -141,11 +141,15 @@ class MediaPlayerView: UIView {
     
     
     func requestIDFA() {
-      ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
-        // Tracking authorization completed. Start loading ads here.
-        // loadAd()
-          self.player.requestAds(view: self, viewController: self.findViewController())
-      })
+        if #available(iOS 14, *) {
+            ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
+                // Tracking authorization completed. Start loading ads here.
+                // loadAd()
+                self.player.requestAds(view: self, viewController: self.findViewController())
+            })
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
 
@@ -251,22 +255,6 @@ class MediaPlayerView: UIView {
         findViewController()?.present(alertController, animated: true)
 
     }
-//
-//        func showContentPlayer() {
-//          self.addChild(playerViewController)
-//          playerViewController.view.frame = self.view.bounds
-//          self.view.insertSubview(playerViewController.view, at: 0)
-//          playerViewController.didMove(toParent:self)
-//        }
-//    //
-    //    func hideContentPlayer() {
-    //      // The whole controller needs to be detached so that it doesn't capture
-    //      // events from the remote.
-    //      playerViewController.willMove(toParent:nil)
-    //      playerViewController.view.removeFromSuperview()
-    //      playerViewController.removeFromParent()
-    //    }
-
     
 }
 

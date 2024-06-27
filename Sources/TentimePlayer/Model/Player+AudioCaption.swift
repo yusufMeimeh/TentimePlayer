@@ -11,24 +11,40 @@ import AVFoundation
 extension TenTimePlayer {
     func getAvailableAudioTracks() async -> [AVMediaSelectionOption] {
         guard let playerItem = playerItem else {return [] }
-        guard let audioTracks = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible)?.options else {return []}
-        return audioTracks
+        if #available(iOS 15.0, *) {
+            guard let audioTracks = try? await playerItem.asset.loadMediaSelectionGroup(for: .audible)?.options else {return []}
+        } else {
+            // Fallback on earlier versions
+        }
+        return []
     }
     
     func getAvailableSubtitleTracks() async -> [AVMediaSelectionOption] {
         guard let playerItem = playerItem else {return [] }
-        guard let subtitleOptions = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible )?.options else {return []}
-        return subtitleOptions
+        if #available(iOS 15.0, *) {
+            guard let subtitleOptions = try? await playerItem.asset.loadMediaSelectionGroup(for: .legible )?.options else {return []}
+        } else {
+            // Fallback on earlier versions
+        }
+        return []
     }
     
     func selectAudioOption(for track: AVMediaSelectionOption) async {
-        guard let audioTracks = try? await playerItem?.asset.loadMediaSelectionGroup(for: .audible) else {return}
-        playerItem?.select(track, in: audioTracks)
+        if #available(iOS 15.0, *) {
+            guard let audioTracks = try? await playerItem?.asset.loadMediaSelectionGroup(for: .audible) else {return}
+            await playerItem?.select(track, in: audioTracks)
+        } else {
+            // Fallback on earlier versions
+        }
     }
     
     func selectSubtitleOption(for track: AVMediaSelectionOption) async {
-        guard let subtitleTracks = try? await playerItem?.asset.loadMediaSelectionGroup(for: .legible) else {return}
-        playerItem?.select(track, in: subtitleTracks)
+        if #available(iOS 15.0, *) {
+            guard let subtitleTracks = try? await playerItem?.asset.loadMediaSelectionGroup(for: .legible) else {return}
+            await playerItem?.select(track, in: subtitleTracks)
+        } else {
+            // Fallback on earlier versions
+        }
     }
 
     
