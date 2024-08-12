@@ -48,37 +48,15 @@ extension TenTimePlayer {
         }
     }
     
-    func setupCommands(isAudio: Bool = false) {
-        if !isAudio {
-            supportedCommand = [
-                .togglePausePlay,
-                .play,
-                .pause,
-                .seekForward,.seekBackward]
-        }else {
-            supportedCommand = [
-                .togglePausePlay,
-                .play,
-                .pause,
-                .nextTrack,
-                .previousTrack]
-        }
-        
-//        let extraCommands: [NowPlayableCommand] = [
-//            .skipBackward,
-//            .skipForward,
-//            .changePlaybackPosition]
-        
-//        if !isLiveStreaming {
-//            supportedCommand.append(contentsOf: extraCommands)
-//        }
+    public func setupCommands(supportedCommand: [NowPlayableCommand]) {
+        self.supportedCommand = supportedCommand
         
         nowPlayable?.handleNowPlayableSessionStart()
         addNotificationCenterCommands()
     }
 
-    internal func updatePlayableStaticMetdata(_ playerData: PlayerData) {
-        setupCommands(isAudio: playerData.isAudio   )
+    public func updatePlayableStaticMetdata(_ playerData: PlayerData) {
+        setupCommands(supportedCommand: self.supportedCommand   )
         nowPlayableStaticMetadata = NowPlayableStaticMetadata(assetURL: playerData.moviePath,
                                                               mediaType: .video,
                                                               isLiveStream: false,

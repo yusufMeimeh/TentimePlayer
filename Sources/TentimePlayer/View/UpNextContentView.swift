@@ -24,12 +24,13 @@ class UpNextContentView: UIView {
     @IBOutlet weak var playButton: UIButton!
     @IBOutlet weak var cancelButton: UIButton!
     @IBOutlet weak var imageWidth: NSLayoutConstraint!
+    var didPressNext = false
     
     // MARK: - Properties
     
     var timer : Timer?
     var labelTimer: Timer?
-    var timeLeft: TimeInterval = 30
+    var timeLeft: TimeInterval = 0
     var endTime: Date?
     
     // MARK: - Closures
@@ -41,21 +42,38 @@ class UpNextContentView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        commonInit()
+//        commonInit()
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+       
+    }
+    
+    public  class func initFromNib() -> UpNextContentView {
+        let className = String(describing: UpNextContentView.self)
+        let bundle = Bundle.module
+        guard let view = bundle.loadNibNamed(className, owner: nil, options: nil)?.first as? UpNextContentView else {
+            fatalError("Could not load nib with name: \(className)")
+        }
+        return view
+    }
+    
+    override func awakeFromNib() {
+        super.awakeFromNib()
+    }
+    
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
         commonInit()
     }
     
     private func commonInit() {
-        let nib = String(describing: UpNextContentView.self)
-        Bundle.main.loadNibNamed(nib, owner: self, options: nil)
-        addSubview(contentView)
+
         
-        contentView.frame = self.bounds
-        contentView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
+//        contentView.frame = self.bounds
+//        contentView.autoresizingMask = [.flexibleHeight, .flexibleWidth]
 //        timerView.createCircularPath()
         
         imageView.layer.cornerRadius = 5
@@ -66,6 +84,7 @@ class UpNextContentView: UIView {
         
         timerLabel.textColor = .white
         titleLabel.textColor = .white
+        subtitleLabel.isHidden = true
 
 //        subtitleLabel
 //            .with(textColor: UIColor.TTWhiteColor)
@@ -78,7 +97,7 @@ class UpNextContentView: UIView {
 
         playButton.setTitle("play next", for: .normal)
         playButton.setTitleColor(.white, for: .normal)
-        playButton.backgroundColor = UIColor.blue
+        playButton.backgroundColor = UIColor.gray
         
         cancelButton.setTitle("Cancel", for: .normal)
         cancelButton.setTitleColor(.white, for: .normal)
@@ -108,7 +127,6 @@ class UpNextContentView: UIView {
             timer = nil
             labelTimer = nil
             timerLabel.text =  "Up next timer 0"
-
         }
     }
     
@@ -157,8 +175,9 @@ class UpNextContentView: UIView {
     }
     
     // MARK: - Actions
-    
-    @IBAction func nextTapped(_ sender: UIButton) {
+        @IBAction func nextTapped(_ sender: UIButton) {
+//        guard !didPressNext else {return}
+//        didPressNext = true
         stopTimer()
         nextTapped?()
     }

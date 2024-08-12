@@ -9,7 +9,7 @@
 import Foundation
 import MediaPlayer
 
-enum NowPlayableCommand: CaseIterable {
+public enum NowPlayableCommand: CaseIterable {
 
     case pause, play, stop, togglePausePlay
     case nextTrack, previousTrack, changeRepeatMode, changeShuffleMode

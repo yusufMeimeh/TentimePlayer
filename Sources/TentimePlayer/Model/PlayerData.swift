@@ -7,7 +7,7 @@
 
 import Foundation
 
-  class PlayerData: NSObject  {
+open  class PlayerData: NSObject, ObservableObject {
     let identifier: Int
     let thumbImage: String
     let moviePath: String
@@ -20,7 +20,7 @@ import Foundation
     var relatedWorks: [PlayerData]
       
       
-      init(identifier: Int, thumbImage: String, moviePath: String, movieName: String, elapsedTime: Double, subtitleType: String? = nil, audioType: String? = nil, offlinePath: String = "", isAudio: Bool = false, relatedWorks: [PlayerData]) {
+     public init(identifier: Int, thumbImage: String, moviePath: String, movieName: String, elapsedTime: Double, subtitleType: String? = nil, audioType: String? = nil, offlinePath: String = "", isAudio: Bool = false, relatedWorks: [PlayerData]) {
           self.identifier = identifier
           self.thumbImage = thumbImage
           self.moviePath = moviePath

@@ -1,5 +1,4 @@
 import XCTest
-@testable import TentimePlayer
 
 final class TentimePlayerTests: XCTestCase {
     func testExample() throws {

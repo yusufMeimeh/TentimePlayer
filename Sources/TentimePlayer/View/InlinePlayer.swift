@@ -7,9 +7,13 @@
 
 import UIKit
 
-class InlinePlayer: MediaPlayerView {
-    override class func initFromNib() -> MediaPlayerView {
+public class InlinePlayer: MediaPlayerView {
+    override public  class func initFromNib() -> MediaPlayerView {
         let className = String(describing: InlinePlayer.self)
-        return Bundle.init(for: InlinePlayer.self).loadNibNamed(className, owner: self, options: nil)!.first as! InlinePlayer
+        let bundle = Bundle.module
+        guard let view = bundle.loadNibNamed(className, owner: nil, options: nil)?.first as? InlinePlayer else {
+            fatalError("Could not load nib with name: \(className)")
+        }
+        return view
     }
 }

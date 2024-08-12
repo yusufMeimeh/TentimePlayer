@@ -1,25 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UpNextContentView" customModule="PlayerSample" customModuleProvider="target">
-            <connections>
-                <outlet property="cancelButton" destination="0a0-d0-rOS" id="auW-Qi-RKV"/>
-                <outlet property="contentView" destination="ZlJ-fH-FzU" id="QEf-9U-srK"/>
-                <outlet property="imageView" destination="7MZ-Gb-tDy" id="MIy-ge-wpU"/>
-                <outlet property="imageWidth" destination="Koy-mK-0dU" id="LN2-h0-1AD"/>
-                <outlet property="playButton" destination="Vjl-nh-r1J" id="rwU-iW-6Jq"/>
-                <outlet property="timerLabel" destination="xdk-nr-tek" id="XoR-R6-cQ3"/>
-                <outlet property="titleLabel" destination="4z3-JX-iNl" id="EHi-0m-e9w"/>
-            </connections>
-        </placeholder>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" id="ZlJ-fH-FzU">
+        <view contentMode="scaleToFill" id="ZlJ-fH-FzU" customClass="UpNextContentView" customModule="TentimePlayer">
             <rect key="frame" x="0.0" y="0.0" width="464" height="152"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
@@ -73,11 +64,11 @@
                         </label>
                     </subviews>
                 </stackView>
-                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="nil-BE-LK9">
-                    <rect key="frame" x="285" y="111" width="150" height="36"/>
+                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="nil-BE-LK9">
+                    <rect key="frame" x="285" y="77" width="70" height="70"/>
                     <subviews>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0a0-d0-rOS">
-                            <rect key="frame" x="0.0" y="0.0" width="80" height="36"/>
+                            <rect key="frame" x="0.0" y="0.0" width="70" height="34"/>
                             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="80" id="bcM-Ib-aGM"/>
@@ -85,11 +76,11 @@
                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                             <state key="normal" title="Button"/>
                             <connections>
-                                <action selector="cancelTapped:" destination="-1" eventType="touchUpInside" id="xil-K1-Q08"/>
+                                <action selector="nextTapped:" destination="ZlJ-fH-FzU" eventType="touchUpInside" id="Y5N-vh-qOm"/>
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Vjl-nh-r1J">
-                            <rect key="frame" x="80" y="0.0" width="70" height="36"/>
+                            <rect key="frame" x="0.0" y="34" width="70" height="36"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="36" id="YJ6-AR-SnK"/>
                                 <constraint firstAttribute="width" constant="70" id="ft5-t6-ozS"/>
@@ -97,7 +88,7 @@
                             <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
                             <state key="normal" title="Button"/>
                             <connections>
-                                <action selector="nextTapped:" destination="-1" eventType="touchUpInside" id="VSi-ey-lIP"/>
+                                <action selector="cancelTapped:" destination="ZlJ-fH-FzU" eventType="touchUpInside" id="upf-I6-R1I"/>
                             </connections>
                         </button>
                     </subviews>
@@ -127,6 +118,15 @@
                 <constraint firstItem="yIc-EW-hmb" firstAttribute="centerX" secondItem="u4I-Sg-QRL" secondAttribute="centerX" id="zt9-Aa-XFM"/>
             </constraints>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="cancelButton" destination="Vjl-nh-r1J" id="TWu-VS-WO5"/>
+                <outlet property="imageView" destination="7MZ-Gb-tDy" id="tzz-g9-pSM"/>
+                <outlet property="imageWidth" destination="Koy-mK-0dU" id="xHD-Tm-Xwd"/>
+                <outlet property="playButton" destination="0a0-d0-rOS" id="bwQ-BA-OpN"/>
+                <outlet property="subtitleLabel" destination="xdk-nr-tek" id="F2E-B9-qlx"/>
+                <outlet property="timerLabel" destination="u4I-Sg-QRL" id="vCD-zX-sxK"/>
+                <outlet property="titleLabel" destination="4z3-JX-iNl" id="6Fn-6C-wih"/>
+            </connections>
             <point key="canvasLocation" x="375.36231884057975" y="-138.61607142857142"/>
         </view>
     </objects>

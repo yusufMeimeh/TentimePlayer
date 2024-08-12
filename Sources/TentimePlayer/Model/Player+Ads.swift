@@ -9,7 +9,7 @@ import Foundation
 import GoogleInteractiveMediaAds
 
 extension TenTimePlayer {
-    open  func setUpAdsLoader() {
+    open func setUpAdsLoader() {
         pictureInPictureProxy = IMAPictureInPictureProxy(avPictureInPictureControllerDelegate: self)
         
         if pictureInPictureController != nil {

@@ -8,7 +8,7 @@
 import AVFoundation
 
 extension AVPlayer {
-    func seek(to percent: Float64) {
+    public func seek(to percent: Float64) {
         guard let duration = currentItem?.duration else { return }
         //compute second from percent value
         let durationInSeconds = percent * CMTimeGetSeconds(duration)
@@ -18,7 +18,7 @@ extension AVPlayer {
     
     /// seek player to specific time
     /// - Parameter delta: number of second should player seek to
-    func seek(by delta: Int64, currentTime: CMTime) {
+   public func seek(by delta: Int64, currentTime: CMTime) {
         let seconds = CMTimeMake(value: delta, timescale: 1)
         let seekTime = CMTimeAdd(currentTime, seconds)
         seek(to: seekTime, toleranceBefore: .zero, toleranceAfter: .zero)
@@ -31,7 +31,7 @@ extension AVPlayer {
     
     /// seek player to specific time
     /// - Parameter delta: number of second should player seek to
-    func seek(second: Float64) {
+    public func seek(second: Float64) {
         let seekTime = CMTimeMakeWithSeconds(second, preferredTimescale:Int32(NSEC_PER_SEC))
         seek(to: seekTime, toleranceBefore: .zero, toleranceAfter: .zero)
     }

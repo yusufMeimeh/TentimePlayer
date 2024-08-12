@@ -65,6 +65,7 @@ extension TenTimePlayer: AVPictureInPictureControllerDelegate {
         }else {
             pause()
         }
+        pipCompletionHandler = completionHandler
         pipModeStatus = .restoreUserInterface
 //        //check how we can change it
 //        guard let activeCustomPlayerViewControllers = activeCustomPlayerViewControllers else {return}

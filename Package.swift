@@ -23,18 +23,42 @@ let package = Package(
         .target(
             name: "TentimePlayer",
             dependencies: [
-                           "Kingfisher",
-                           "GoogleInteractiveMediaAds"
-                       ],
+                "Kingfisher",
+                "GoogleInteractiveMediaAds"
+            ],
             path: "Sources/TentimePlayer",
-            exclude: ["Tests"],
-            sources: ["Cache", "Model", "RemoteCommand", "View"],
+            sources: ["Cache",
+                      "Model",
+                      "RemoteCommand",
+                      "View",
+                      "Cache/FairPlay",
+                      "Cache/FairPlay/Protocol",
+                      "Cache/FairPlay/Helper",
+                      "Cache/FairPlay/Helper/FileManaging",
+                      "Cache/FairPlay/AVAssetLoader/",
+                      "Cache/FairPlay/AVContentKey/",
+                      "Cache/FairPlay/Helper/UserDefaultsManaging",
+                      "Cache/FairPlay/AVAssetLoader/OfflineKeyProcess",
+                      "Cache/FairPlay/AVContentKey/OfflineKeyProcess",
+                      "Cache/FairPlay/AVAssetLoader/OnlineKeyProcess",
+                      "Cache/FairPlay/AVContentKey/OnlineKeyProcess"],
+            resources: [
+                .process("Design/InlinePlayer.xib"),
+                .process("Design/TenTimeMediaPlayerView.xib"),
+                .process("Design/UpNextContentView.xib"),
+                .process("Resources")
+            ],
             publicHeadersPath: ""
         ),
         .binaryTarget(
             name: "GoogleInteractiveMediaAds",
             path: "Frameworks/GoogleInteractiveMediaAds.xcframework"
         ),
-        
-    ]
+        .testTarget(
+            name: "Tests",
+            dependencies: ["TentimePlayer"],
+            sources: ["TentimePlayerTests/FairPlayTest",
+                      "TentimePlayerTests/Mock"]
+        ),
+        ]
 )

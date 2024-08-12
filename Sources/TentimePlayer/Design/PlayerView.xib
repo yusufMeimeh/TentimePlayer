@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="32700.99.1234" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
     <device id="retina6_12" orientation="landscape" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="22684"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -35,7 +36,7 @@
                                                 <constraint firstAttribute="width" secondItem="FLs-cP-hVx" secondAttribute="height" multiplier="1:1" id="k7U-2w-Kg5"/>
                                             </constraints>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <state key="normal" image="PlayerClose"/>
+                                            <state key="normal" image="close.png"/>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="249" verticalHuggingPriority="251" text="For Bigger Meltdowns" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HnM-Yp-FhT">
                                             <rect key="frame" x="58" y="1.3333333333333321" width="234" height="27.666666666666668"/>
@@ -52,7 +53,7 @@
                                         <constraint firstAttribute="height" constant="40" id="hN0-0v-uwk"/>
                                     </constraints>
                                     <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                    <state key="normal" image="PlayerPause"/>
+                                    <state key="normal" image="play.png"/>
                                 </button>
                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="-1" translatesAutoresizingMaskIntoConstraints="NO" id="C6Z-fQ-0vh">
                                     <rect key="frame" x="2" y="167" width="38" height="32"/>
@@ -64,7 +65,7 @@
                                                 <constraint firstAttribute="width" secondItem="cET-eQ-Kj5" secondAttribute="height" multiplier="38:21" id="rT7-zH-DkG"/>
                                             </constraints>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <state key="normal" image="PlayerRewind10"/>
+                                            <state key="normal" image="backward.png"/>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10 Sec" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ggp-lY-9x2">
                                             <rect key="frame" x="0.0" y="20" width="38" height="12"/>
@@ -91,7 +92,7 @@
                                                 <constraint firstAttribute="width" secondItem="T8V-u1-q4a" secondAttribute="height" multiplier="38:21" id="S5d-sp-UTA"/>
                                             </constraints>
                                             <color key="tintColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                            <state key="normal" image="PlayerForward10"/>
+                                            <state key="normal" image="forward.png"/>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10 Sec" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="M1Q-F4-ehr">
                                             <rect key="frame" x="0.0" y="20" width="38" height="12"/>
@@ -117,14 +118,14 @@
                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PlayerLiveEn" translatesAutoresizingMaskIntoConstraints="NO" id="lTI-hq-SzH">
+                                        <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Live_en.png" translatesAutoresizingMaskIntoConstraints="NO" id="lTI-hq-SzH">
                                             <rect key="frame" x="2.6666666666666714" y="0.0" width="58" height="22"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="58" id="HpK-TS-TgR"/>
                                                 <constraint firstAttribute="height" constant="22" id="sOi-EU-fRo"/>
                                             </constraints>
                                         </imageView>
-                                        <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="PlayerLiveAr" translatesAutoresizingMaskIntoConstraints="NO" id="0NQ-1x-doL">
+                                        <imageView hidden="YES" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="live.png" translatesAutoresizingMaskIntoConstraints="NO" id="0NQ-1x-doL">
                                             <rect key="frame" x="633.66666666666663" y="2" width="50" height="20"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="50" id="19c-OE-5Dg"/>
@@ -394,20 +395,20 @@
         </view>
     </objects>
     <resources>
-        <image name="PlayerClose" width="96" height="96"/>
+        <image name="Live_en.png" width="36" height="18"/>
         <image name="PlayerEpisodes" width="96" height="96"/>
-        <image name="PlayerForward10" width="152" height="81"/>
-        <image name="PlayerLiveAr" width="86" height="38"/>
-        <image name="PlayerLiveEn" width="72" height="36"/>
         <image name="PlayerNext" width="96" height="96"/>
-        <image name="PlayerPause" width="160" height="160"/>
         <image name="PlayerPip" width="96" height="96"/>
         <image name="PlayerPrevious" width="96" height="96"/>
         <image name="PlayerReload" width="96" height="96"/>
-        <image name="PlayerRewind10" width="152" height="81"/>
         <image name="PlayerSettings" width="96" height="96"/>
         <image name="PlayerSkipIntroEn" width="94" height="30"/>
         <image name="PlayerWatermark" width="68" height="68"/>
+        <image name="backward.png" width="38" height="20.25"/>
+        <image name="close.png" width="24" height="24"/>
+        <image name="forward.png" width="38" height="20.25"/>
+        <image name="live.png" width="43" height="19"/>
+        <image name="play.png" width="40" height="40"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

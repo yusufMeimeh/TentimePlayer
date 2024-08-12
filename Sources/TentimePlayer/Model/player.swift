@@ -16,21 +16,22 @@ public enum PipModeStatus: Int {
     case end = 2
     case restoreUserInterface  = 3
     case stop = 4
+   
 }
 
-
-
-open class TenTimePlayer: NSObject {
+open class TenTimePlayer: NSObject, ObservableObject {
     
     // Create a shared instance as a singleton
-    static let shared = TenTimePlayer()
+    public static let shared = TenTimePlayer()
     internal var player: AVPlayer? = AVPlayer(playerItem: nil)
     private var playerLayer: AVPlayerLayer?
-    var playerItem: CachingPlayerItem?
+    var playerItem: AVPlayerItem?
     
     var isSeeking = false
+    
     var playerData : PlayerData?
-    var isCurrentlyPlaying: Bool = true
+    
+    public var isCurrentlyPlaying: Bool = true
 
     var supposedCurrentTime: CMTime?
 
@@ -40,21 +41,33 @@ open class TenTimePlayer: NSObject {
 
     var supportedCommand: [NowPlayableCommand]  = []
     
-    @Published var isPlay: Bool = false
+    var queueItem: [PlayerData] = []
     
-    @Published var isLoading: Bool = false
+    var currentQueueIndex = -1
     
-    @Published var didUpdateTime: (String, String, Double, Double)?
+    @Published public var isPlay: Bool = false
     
-    @Published var isPipModeEnabled: Bool = false
+    @Published public var isLoading: Bool = false
     
-    @Published var shouldShowUpNextContent: Bool = false
+    @Published public var didUpdateTime: (String, String, Double, Double)?
     
-    @Published var shouldHideUpNextContent: Bool = false
+    @Published public var isPipModeEnabled: Bool = false
+    
+    @Published public var shouldShowUpNextContent: Bool = false
+    
+    @Published public var shouldHideUpNextContent: Bool = false
 
-    @Published var didFinishPlaying: Bool = false
+    @Published public var didFinishPlaying: Bool = false
     
-    @Published var pipModeStatus: PipModeStatus?
+    @Published public var pipModeStatus: PipModeStatus?
+    
+    @Published public var progressValue: Double = 0.0
+
+    @Published public var durationTimeFormatted: String = ""
+    
+    @Published public var durationSeconds: Double = 0.0
+
+    @Published public var currentTimeFormatted: String = ""
 
     var remainingTime: Double = 0
     
@@ -80,15 +93,15 @@ open class TenTimePlayer: NSObject {
     
     var playerViewControllerKVOContext = 0
     
-    var isPipModeStarted: Bool = false
+    public  var isPipModeStarted: Bool = false
     
     //up next content
-    var isCanceledUpNextContent = false
+    var isCanceledUpNextContent: Bool? = nil 
     
-    var showUpNextBefore: Double = 0
+    public var showUpNextBefore: Double = 30
     
-    var showUpNextContent: Bool = false
-    
+    public var showUpNextContent: Bool = false
+
     
     var currentIndex = 0
 
@@ -99,6 +112,8 @@ open class TenTimePlayer: NSObject {
     }
     
     var currentTime: CMTime?
+    
+    var pipCompletionHandler: ((Bool) -> Void)?
 
     var nowPlayableDynamicMetadata: NowPlayableDynamicMetadata? {
         didSet {
@@ -111,11 +126,13 @@ open class TenTimePlayer: NSObject {
             nowPlayable?.handleNowPlayableItemChange(metadata: nowPlayableStaticMetadata)
         }
     }
-    
-    
+
+    private var drmManager: DRMManager
+
     override init() {
+        self.drmManager = DRMManager()
         super.init()
-        self.setupCommands()
+        self.setupCommands(supportedCommand: [.play,.pause,.skipBackward,.skipForward, .changePlaybackPosition])
         self.observePlayCurrentTime()
         guard let player = player else {return}
         contentPlayhead = IMAAVPlayerContentPlayhead(avPlayer: player)
@@ -138,7 +155,7 @@ open class TenTimePlayer: NSObject {
     @objc func playerDidFinishPlaying(_ noti: Notification) {
         if let p = noti.object as? AVPlayerItem, p == player?.currentItem {
             pause()
-            didFinishPlaying = true
+//            didFinishPlaying = true
             
 //            if let _ = appDelegate.window?.rootViewController?.topmostViewController() as? PlayerViewController, isAudioSessionUsingAirplayOutputRoute() {
 //                return
@@ -159,13 +176,19 @@ open class TenTimePlayer: NSObject {
                              self.player?.currentItem?.duration.seconds ?? 0.0
                              
             )
+            
+            
             guard let player = self.player , let playerItem = player.currentItem else {return}
           
             self.currentTime = time
-                        
             
             let duration = Float(playerItem.duration.seconds)
             
+            self.progressValue = Double((currentTime?.seconds ?? 0) /  Double(duration))
+
+            self.currentTimeFormatted = time.toDisplayString()
+            self.durationTimeFormatted =   self.player?.currentItem?.duration.toDisplayString() ?? "00:00"
+
             let cTime = CMTimeGetSeconds(self.player?.currentTime() ?? CMTime())
             self.nowPlayableDynamicMetadata = NowPlayableDynamicMetadata(rate: player.rate,
                                                                          position: cTime,
@@ -215,7 +238,7 @@ open class TenTimePlayer: NSObject {
      }
     
     
-    func endPlayer() {
+   public func endPlayer() {
         player?.pause()
         nowPlayable?.removeNotificationCenter(commands: supportedCommand )
         player?.replaceCurrentItem(with: nil)
@@ -226,6 +249,10 @@ open class TenTimePlayer: NSObject {
     }
  
  
+    public func configureDRM(licenseURL: URL, certificate: Data) {
+           drmManager.configureDRM(licenseURL: licenseURL, certificate: certificate)
+    }
+
     deinit {
         cleanUpObservers()
     }

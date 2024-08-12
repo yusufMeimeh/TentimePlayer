@@ -10,19 +10,19 @@ import Foundation
 
 extension TenTimePlayer {
     
-    func play() {
+    public func play() {
         isCurrentlyPlaying = true
         player?.play()
         isPlay = true
     }
     
-    func pause() {
+    public func pause() {
         isCurrentlyPlaying = false
         player?.pause()
         isPlay = false
     }
     
-    func togglePlayerPause() {
+    public  func togglePlayerPause() {
         if isCurrentlyPlaying {
             pause()
         }else {

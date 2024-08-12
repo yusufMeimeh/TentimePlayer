@@ -9,8 +9,8 @@ import AVFoundation
 
 
 extension TenTimePlayer {
-    func seekToCurrentTime(delta: Int64) {
-        
+    public func seekToCurrentTime(delta: Int64) {
+        self.isSeeking = true
         guard let currentTime = supposedCurrentTime else {
             return
         }
@@ -43,6 +43,10 @@ extension TenTimePlayer {
                       player?.currentItem?.duration.toDisplayString() ?? "00:00",
                       0,
                       durationTimeSeconds: player?.currentItem?.duration.seconds ?? 0.0)
+        self.progressValue = 0.0
+
+        self.currentTimeFormatted = "00:00"
+        self.durationTimeFormatted =   self.player?.currentItem?.duration.toDisplayString() ?? "00:00"
          player?.seek(second: 0)
     }
 
@@ -55,6 +59,13 @@ extension TenTimePlayer {
                              newCurrent,
                              duration.seconds
                )
+
+            self.currentTimeFormatted = currentTime?.toDisplayString() ?? ""
+            self.durationTimeFormatted =  duration.toDisplayString()
+            let duration = Float(  self.player?.currentItem?.duration.seconds ?? 0.0)
+
+            self.progressValue =  Double((currentTime?.seconds ?? 0) /  Double(duration))
+
             didFinishPlaying = true
         }
     }
@@ -66,39 +77,55 @@ extension TenTimePlayer {
                          player?.currentItem?.duration.toDisplayString() ?? "00:00",
                          currentTime.seconds,
                          self.player?.currentItem?.duration.seconds ?? 0.0)
+        self.currentTimeFormatted = currentTime.toDisplayString()
+        self.durationTimeFormatted =   player?.currentItem?.duration.toDisplayString() ?? "00:00"
+        let duration = Float(  self.player?.currentItem?.duration.seconds ?? 0.0)
+
+        self.progressValue =  Double((currentTime.seconds) /  Double(duration))
+
     }
     
     
-    func seek(percent: Float64) async {
+  
+    public func seek(percent: Float64) {
+        self.isSeeking = true
         guard let player = player else {
             return
         }
+       isPlay ? player.pause() : ()
         let durationSeconds = CMTimeGetSeconds(player.currentItem?.duration ?? CMTimeMake(value: 1, timescale: 1))
         
-        if #available(iOS 15, *) {
-            if let playerTimescale = try? await player.currentItem?.asset.load(.duration) {
-                let value = percent * durationSeconds
-                // Extract the CMTimeScale from playerTimescale
-                let timeScale = playerTimescale.timescale
-                let time =  CMTime(seconds: value, preferredTimescale: timeScale)
-                await player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero)
-                supposedCurrentTime = time
-                if let supposedCurrentTime = supposedCurrentTime {
-                    didUpdateTime = (supposedCurrentTime.toDisplayString(),
-                                     self.player?.currentItem?.duration.toDisplayString() ?? "00:00",
-                                     supposedCurrentTime.seconds,
-                                     self.player?.currentItem?.duration.seconds ?? 0.0)
-                }
+        let value = percent * durationSeconds
+        let time = CMTime(seconds: value, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
+        
+        player.seek(to: time, toleranceBefore: .zero, toleranceAfter: .zero) { [weak self] finished in
+            guard let self = self else { return }
+            
+            if finished {
+                self.supposedCurrentTime = time
                 
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
-                    self?.isSeeking = false
+                DispatchQueue.main.async {
+                    if let supposedCurrentTime = self.supposedCurrentTime {
+                        self.didUpdateTime = (supposedCurrentTime.toDisplayString(),
+                                              self.player?.currentItem?.duration.toDisplayString() ?? "00:00",
+                                              supposedCurrentTime.seconds,
+                                              self.player?.currentItem?.duration.seconds ?? 0.0)
+                        
+                        let duration = Float(self.player?.currentItem?.duration.seconds ?? 0.0)
+                        self.progressValue = Double((self.supposedCurrentTime?.seconds ?? 0) / Double(duration))
+                        
+                        self.currentTimeFormatted = supposedCurrentTime.toDisplayString()
+                        self.durationTimeFormatted = self.player?.currentItem?.duration.toDisplayString() ?? "00:00"
+                    }
+                    self.isSeeking = false
+                    self.isPlay ? player.play() : ()
                 }
+             
+//                DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+//                }
             }
-        } else {
-            // Fallback on earlier versions
         }
     }
-    
     
     func getCurrentSeekingSecond() -> TimeInterval? {
         guard let time = currentTime else {return nil}

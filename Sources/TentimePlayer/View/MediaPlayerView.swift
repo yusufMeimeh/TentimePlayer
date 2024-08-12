@@ -12,7 +12,11 @@ import AVKit
 import AppTrackingTransparency
 import AdSupport
 
-protocol MediaPlayerViewDelegate: AnyObject {
+//import GoogleCast
+
+var  pipModeController: UIViewController?
+
+public protocol MediaPlayerViewDelegate: AnyObject {
     func didStartPipMode()
     func didEndPipMode()
     func didRestorePipMode(completionHandler: @escaping (Bool) -> Void)
@@ -26,11 +30,14 @@ extension MediaPlayerViewDelegate {
     func didClosePlayer() {}
 }
 
-class MediaPlayerView: UIView {
+
+public class MediaPlayerView: UIView {
     // player outlets and features
     @IBOutlet var playPauseButton: UIButton?
     @IBOutlet var progressBar: UISlider?
     
+    @IBOutlet weak var chromeCastView: UIView!
+    @IBOutlet weak var controlControllerViewApperance: UIView!
     @IBOutlet var playerContainerView: UIView?
     @IBOutlet var currentTimeLabel: UILabel?
     @IBOutlet var durationTimeLabel: UILabel?
@@ -38,11 +45,11 @@ class MediaPlayerView: UIView {
     var player = TenTimePlayer.shared
     private var playerLayer: AVPlayerLayer!
     
-    weak var delegate: MediaPlayerViewDelegate?
+    public weak var delegate: MediaPlayerViewDelegate?
     
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView?
     
-    var enablePipMode: Bool = false
+    public var enablePipMode: Bool = false
     
     @IBOutlet weak var pipModeButton: UIButton?
     
@@ -50,20 +57,25 @@ class MediaPlayerView: UIView {
     var audioTraks: [AVMediaSelectionOption] = []
     var subtitleTraks: [AVMediaSelectionOption] = []
     
-    let upNextView = UpNextContentView()
+    let upNextView = UpNextContentView.initFromNib()
     
     @IBOutlet weak var routerPickerView: AVRoutePickerView! {
         didSet {
             createAirPlayView()
         }
     }
+    
     @IBOutlet weak var controllerContainerVIew: UIView!
+    
     var isSequenceContent = false {
         didSet {
             isSequenceContent ? player.showUpNextContent(before: showNextItemBefore) : ()
         }
     }
     
+    @IBOutlet weak var previousButton: UIButton!
+    
+    @IBOutlet weak var nextButton: UIButton!
     var showNextItemBefore: Double = 30
     
     var nextContent: PlayerData?
@@ -72,10 +84,11 @@ class MediaPlayerView: UIView {
     
     private var cancellables = Set<AnyCancellable>()
     
-    class func initFromNib() -> MediaPlayerView {
-        let bundle = Bundle(for: self)
-        if bundle.path(forResource: "TenTimeMediaPlayerView", ofType: "nib") != nil {
-            return UINib(nibName: "TenTimeMediaPlayerView", bundle: bundle).instantiate(withOwner: nil, options: nil).first as! UIView as! MediaPlayerView
+    class public func initFromNib() -> MediaPlayerView {
+        let className = String(describing: "TenTimeMediaPlayerView")
+        let bundle = Bundle.module
+        if let view = bundle.loadNibNamed(className, owner: nil, options: nil)?.first as? MediaPlayerView  {
+            return view
         } else {
             preconditionFailure("This method must be overridden")
         }
@@ -84,17 +97,22 @@ class MediaPlayerView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupBinding()
+        commonInit()
     }
     
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupBinding()
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
         commonInit()
     }
+    
+    public override func layoutSubviews() {
+        super.layoutSubviews()
+        commonInit()
+        playerLayer.frame = bounds
+        
+    }
+    
     
     private func commonInit() {
         //Create AVPlayerLayer and configure it
@@ -133,10 +151,45 @@ class MediaPlayerView: UIView {
         upNextView.nextTapped = { [weak self]  in
             self?.playNextItem()
         }
+        
         if shouldAddAds {
             requestIDFA()
             
         }
+        
+        // Add tap gesture recognizer to playerContainerView
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(showControllerContainer))
+        controlControllerViewApperance?.addGestureRecognizer(tapGesture)
+        
+        // Add tap gesture recognizer to playerContainerView
+        let tapGesture2 = UITapGestureRecognizer(target: self, action: #selector(handlePlayerTap))
+        controllerContainerVIew?.addGestureRecognizer(tapGesture2)
+    }
+    
+    
+    @objc private func handlePlayerTap() {
+        // Action to perform when the player is tapped
+        print("Player tapped")
+        // Animate the visibility toggle of controllerContainerView
+        
+        UIView.animate(withDuration: 0.3, animations: {
+            self.controllerContainerVIew.alpha =  self.controllerContainerVIew.alpha == 0 ? 1 : 0
+        }) { _ in
+            self.controlControllerViewApperance.isUserInteractionEnabled = true
+        }
+    }
+    
+    
+    @objc private func showControllerContainer() {
+        // Action to perform when the player is tapped
+        print("Player tapped")
+        // Add your custom action here
+        // Animate the visibility toggle of controllerContainerView
+        UIView.animate(withDuration: 0.3, animations: {
+            self.controllerContainerVIew.alpha = 1
+            self.controlControllerViewApperance.isUserInteractionEnabled = false
+        })
+        
     }
     
     
@@ -152,7 +205,7 @@ class MediaPlayerView: UIView {
         }
     }
     
-
+    
     
     func createAirPlayView() {
         routerPickerView.delegate = self
@@ -160,23 +213,29 @@ class MediaPlayerView: UIView {
         routerPickerView.activeTintColor = .systemBlue
         routerPickerView.tintColor = .white
         routerPickerView.prioritizesVideoDevices = true
-//        presenter?.playerWrapperHandler?.playerHandler?.playerManager.player?.allowsExternalPlayback = true
+        //        presenter?.playerWrapperHandler?.playerHandler?.playerManager.player?.allowsExternalPlayback = true
         
     }
     
+    
+    
     private func playNextItem() {
-        guard let nextContent = nextContent else {return}
+        player.shouldShowUpNextContent = false
         upNextView.isHidden = true
+        guard let nextContent = self.player.getNextItem() else {return}
         player.loadMedia(from: nextContent)
+        player.currentQueueIndex += 1
         controllerContainerVIew?.isHidden = false
     }
     // Common functionality (e.g., play, pause, progress update)
-    func play() {
+    public func play() {
         // Implement play logic
+        player.play()
     }
     
-    func pause() {
+    public func pause() {
         // Implement pause logic
+        player.pause()
     }
     
     @IBAction func togglePlayPauseAction(_ sender: UIButton) {
@@ -185,21 +244,27 @@ class MediaPlayerView: UIView {
     
     /// - Parameter sender:
     @IBAction func handleCurrentTimePlayerViewSlider(_ sender: UISlider) {
-        Task {
-            await player.seek(percent: Double(sender.value))
-        }
+        player.seek(percent: Double(sender.value))
         //        presenter?.didTriggerOnSeekedEvent(currentTime: Double(sender.value))
         //        keepControls = true
     }
     @IBAction func close(_ sender: Any) {
         player.endPlayer()
         delegate?.didClosePlayer()
+        findViewController()?.dismiss(animated: true)
+    }
+    
+    @IBAction func playPreviousContent(_ sender: Any) {
+        player.playPrevItem()
+    }
+    
+    @IBAction func playNextContent(_ sender: Any) {
+        player.playNextItem()
     }
     
     @IBAction func showAudioTracks(_ sender: Any) {
         // Create an alert controller
         let alertController = UIAlertController(title: "Audio Options", message: nil, preferredStyle: .actionSheet)
-        
         // Add audio track options
         for (_, audioTrack) in audioTraks.enumerated() {
             let action = UIAlertAction(title: audioTrack.displayName, style: .default) { [weak self] _ in
@@ -224,28 +289,27 @@ class MediaPlayerView: UIView {
         
         
         findViewController()?.present(alertController, animated: true)
-        
     }
     
     @IBAction func showSubtitleTracks(_ sender: Any) {
         let alertController = UIAlertController(title: "Subtitle Options", message: nil, preferredStyle: .actionSheet)
-
+        
         // Add subtitle track options
-          for (_, subtitleTrack) in subtitleTraks.enumerated() {
-              let action = UIAlertAction(title: subtitleTrack.displayName, style: .default) { [weak self] _ in
-                  // Handle subtitle track selection here
-                  // You can use subtitleTrack to access the selected track
-                  // Add your logic to select the subtitle track
-                  // For example, you can set a variable to store the selected subtitle track.
-                  Task {
-                      await self?.player.selectSubtitleOption(for:subtitleTrack)
-                  }
-                  // After selection, dismiss the modal sheet
-                  alertController.dismiss(animated: true, completion: nil)
-              }
-              
-              alertController.addAction(action)
-          }
+        for (_, subtitleTrack) in subtitleTraks.enumerated() {
+            let action = UIAlertAction(title: subtitleTrack.displayName, style: .default) { [weak self] _ in
+                // Handle subtitle track selection here
+                // You can use subtitleTrack to access the selected track
+                // Add your logic to select the subtitle track
+                // For example, you can set a variable to store the selected subtitle track.
+                Task {
+                    await self?.player.selectSubtitleOption(for:subtitleTrack)
+                }
+                // After selection, dismiss the modal sheet
+                alertController.dismiss(animated: true, completion: nil)
+            }
+            
+            alertController.addAction(action)
+        }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {  _ in
             // Dismiss the modal sheet without selecting any option
             alertController.dismiss(animated: true, completion: nil)
@@ -253,13 +317,13 @@ class MediaPlayerView: UIView {
         alertController.addAction(cancelAction)
         
         findViewController()?.present(alertController, animated: true)
-
+        
     }
     
 }
 
 extension MediaPlayerView {
-
+    
     /// - Parameter sender:
     @IBAction func pipMode(_ sender: Any) {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
@@ -282,24 +346,62 @@ extension MediaPlayerView {
     }
     
     func didStartPipMode() {
+        guard let viewController = self.findViewController() else { return }
+        
+        if viewController.parent != nil {
+            // Dismiss the view controller from its parent before using it in PiP mode
+            viewController.dismiss(animated: true) { [weak self] in
+                pipModeController = viewController
+                // Present the PiP mode controller here if needed
+            }
+        } else {
+            pipModeController = viewController
+            // Present the PiP mode controller here if needed
+        }
         delegate?.didStartPipMode()
+        
     }
     
     func didEndPipMode() {
+        player.endPlayer()
+        delegate?.didClosePlayer()
         delegate?.didEndPipMode()
+        pipModeController = nil
+        
     }
     
-    func player(restoreUserInterfaceForPictureInPictureStopWithCompletionHandler completionHandler: @escaping (Bool) -> Void) {
+    func player(completionHandler: @escaping (Bool) -> Void) {
+        guard let viewController = pipModeController else {
+            completionHandler(false)
+            return
+        }
+        
+        if let parentViewController = viewController.parent {
+            // Dismiss the view controller from its parent before presenting it
+            parentViewController.dismiss(animated: false) { [weak self] in
+                self?.presentViewController(viewController, completionHandler: completionHandler)
+            }
+        } else {
+            presentViewController(viewController, completionHandler: completionHandler)
+        }
+    }
+    
+    private func presentViewController(_ viewController: UIViewController, completionHandler: @escaping (Bool) -> Void) {
         delegate?.didRestorePipMode(completionHandler: completionHandler)
+        completionHandler(true)
+        
+
+//        findViewController()?.topmostViewController().present(viewController, animated: true, completion: {
+//            self.delegate?.didRestorePipMode(completionHandler: completionHandler)
+//            pipModeController = nil
+//        })
     }
     
-   
     
     private func setupBinding() {
         player.$isPipModeEnabled
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: {[weak self]  isPipModeEnabled in
-                self?.pipModeButton?.isEnabled = isPipModeEnabled
+            .sink(receiveValue: {[weak self]  isPipModeEnabled in                self?.pipModeButton?.isEnabled = isPipModeEnabled
             })
             .store(in: &cancellables)
         
@@ -317,7 +419,7 @@ extension MediaPlayerView {
         player.$didFinishPlaying
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: {[weak self]  isLoading in
-                if !(self?.upNextView.isHidden ?? false) {
+                if self?.player.isCanceledUpNextContent == false {
                     self?.playNextItem()
                     self?.player.play()
                 }
@@ -328,12 +430,14 @@ extension MediaPlayerView {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: {[weak self]  shouldShowUpNextContent in
                 if !shouldShowUpNextContent {return}
-                guard let data = self?.player.getNextItem(),
-                      let remainingTime = self?.player.remainingTime else {return}
+                guard
+                    let remainingTime = self?.player.remainingTime,
+                    let data = self?.player.getNextItem()
+                else {return}
                 self?.nextContent = data
                 self?.upNextView.isHidden = false
-                self?.upNextView.configure(with: data.thumbImage, data.movieName, data.description)
-                self?.upNextView.runTimer(with: remainingTime)
+                self?.upNextView.configure(with: data.thumbImage,data.movieName, data.description)
+                self?.upNextView.runTimer(with: self?.showNextItemBefore ?? 0)
                 self?.controllerContainerVIew?.isHidden = true
             })
             .store(in: &cancellables)
@@ -350,7 +454,12 @@ extension MediaPlayerView {
         player.$isPlay
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: {[weak self]  isPlay in
-                self?.playPauseButton?.setImage(UIImage(named: isPlay ? "PlayerPause" : "PlayerPlay"), for: .normal)
+                guard let bundle = Bundle.module.path(forResource:isPlay ? "pause" : "play", ofType: "png"),
+                      let image = UIImage(contentsOfFile: bundle) else {
+                    print("Failed to load image.")
+                    return
+                }
+                self?.playPauseButton?.setImage(image, for: .normal)
             })
             .store(in: &cancellables)
         
@@ -376,14 +485,16 @@ extension MediaPlayerView {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: {[weak self] status in
                 switch status {
-                    case .start:
-                        self?.didStartPipMode()
-                    case .end:
-                        self?.didEndPipMode()
-                    case .restoreUserInterface:
-                            ()
-//                        self?.delegate?.didRestorePipMode(completionHandler: completionHandler)
-                    default: ()
+                case .start:
+                    self?.didStartPipMode()
+                case .end:
+                    
+                    self?.didEndPipMode()
+                case .restoreUserInterface:
+                    ()
+                    guard let complitionHandler =  self?.player.pipCompletionHandler else {return}
+                    self?.player(completionHandler: complitionHandler)
+                default: ()
                 }
             })
             .store(in: &cancellables)
@@ -407,15 +518,24 @@ extension UIView {
             return nil
         }
     }
+    
+    
 }
 
+extension UIViewController {
+    func topmostViewController() -> UIViewController {
+        if let presentedVC = self.presentedViewController {
+            return presentedVC.topmostViewController()
+        }
+        return self
+    }}
 
 extension MediaPlayerView: AVRoutePickerViewDelegate {
-    func routePickerViewWillBeginPresentingRoutes(_ routePickerView: AVRoutePickerView) {
+    public func routePickerViewWillBeginPresentingRoutes(_ routePickerView: AVRoutePickerView) {
         print("routePickerViewWillBeginPresentingRoutes")
     }
     
-    func routePickerViewDidEndPresentingRoutes(_ routePickerView: AVRoutePickerView) {
+    public  func routePickerViewDidEndPresentingRoutes(_ routePickerView: AVRoutePickerView) {
         print("routePickerViewDidEndPresentingRoutes")
     }
 }
