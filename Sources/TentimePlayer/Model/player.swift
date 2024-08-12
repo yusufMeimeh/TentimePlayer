@@ -248,8 +248,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
 //        cleanUpObservers()
     }
  
- 
-    public func configureDRM(licenseURL: URL, certificate: Data) {
+    public func configureDRM(licenseURL: String, certificate: String) {
            drmManager.configureDRM(licenseURL: licenseURL, certificate: certificate)
     }
 

@@ -8,9 +8,9 @@
 
 import AVKit
 
-struct AssetManagerConstants {
-    static let drmProxy = ""
-    static let license = ""
+internal struct AssetManagerConstants {
+    static var drmProxy = ""
+    static var license = ""
 }
 
 

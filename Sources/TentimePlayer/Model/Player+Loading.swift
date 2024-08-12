@@ -39,7 +39,6 @@ extension TenTimePlayer {
     }
     
     private func prepateKeyHandler() -> AssetKeyHandler {
-        
         let keyHandler: AssetKeyHandler
         #if targetEnvironment(simulator)
         keyHandler = SimulatorAssetKeyHandler()
@@ -76,27 +75,3 @@ extension TenTimePlayer {
    
 }
 
-//
-//extension TenTimePlayer: CachingPlayerItemDelegate {
-//    
-//    func playerItemIsLoading() {
-//        isLoading = true
-//    }
-//
-//    func playerItemStopLoading() {
-//        if isCurrentlyPlaying {
-//            player?.play()
-//        }else {
-//            player?.pause()
-//        }
-//       isLoading = false
-//        
-//    }
-//    
-//    func playerItemReadyToPlay(_ playerItem: CachingPlayerItem) {
-//        isLoading = false
-//        isLoadingVideo = false
-//        durationSeconds = playerItem.duration.seconds
-//    }
-//    
-//}

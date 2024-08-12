@@ -8,13 +8,8 @@
 import Foundation
 
 class DRMManager {
-    private var licenseURL: URL?
-    private var certificate: Data?
-
-
-    func configureDRM(licenseURL: URL, certificate: Data) {
-        self.licenseURL = licenseURL
-        self.certificate = certificate
+    func configureDRM(licenseURL: String, certificate: String) {
+        AssetManagerConstants.drmProxy = licenseURL
+        AssetManagerConstants.license = certificate
     }
-
 }
