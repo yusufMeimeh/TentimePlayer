@@ -10,10 +10,10 @@ import GoogleInteractiveMediaAds
 
 extension TenTimePlayer {
     open func setUpAdsLoader() {
-        pictureInPictureProxy = IMAPictureInPictureProxy(avPictureInPictureControllerDelegate: self)
-        
-        if pictureInPictureController != nil {
-          pictureInPictureController!.delegate = pictureInPictureProxy
+        pipModeManager.pictureInPictureProxy = IMAPictureInPictureProxy(avPictureInPictureControllerDelegate: pipModeManager)
+
+        if pipModeManager.pictureInPictureController != nil {
+            pipModeManager.pictureInPictureController!.delegate = pipModeManager.pictureInPictureProxy
         }
         
         let settings = IMASettings()
@@ -27,8 +27,7 @@ extension TenTimePlayer {
 
     open  func requestAds(view: UIView, viewController: UIViewController?) {
        // Create ad display container for ad rendering.
-       guard let player = player,
-       let pictureInPictureProxy = pictureInPictureProxy else {return}
+        guard let pictureInPictureProxy = pipModeManager.pictureInPictureProxy else {return}
        let adDisplayContainer = IMAAdDisplayContainer(adContainer: view, viewController: viewController)
        // Create an ad request with our ad tag, display container, and optional user context.
        let request = IMAAdsRequest(
@@ -54,13 +53,9 @@ extension TenTimePlayer: IMAAdsLoaderDelegate {
     open func adsLoader(_ loader: IMAAdsLoader, failedWith adErrorData: IMAAdLoadingErrorData) {
         print("Error loading ads: " + (adErrorData.adError.message ?? ""))
 //          showContentPlayer()
-         player?.play()
+        playbackManager.play()
         isAdPlayback = false
-
-
     }
-    
-    
 }
 
 // MARK: - IMAAdsManagerDelegate
@@ -68,11 +63,10 @@ extension TenTimePlayer: IMAAdsManagerDelegate {
     open   func adsManager(_ adsManager: IMAAdsManager, didReceive event: IMAAdEvent) {
         switch event.type {
         case .LOADED:
-            if pictureInPictureController == nil
-                || !pictureInPictureController!.isPictureInPictureActive
+            if pipModeManager.pictureInPictureController == nil
+                || !pipModeManager.pictureInPictureController!.isPictureInPictureActive
             {
                 adsManager.start()
-                
             }
             break
         case IMAAdEventType.PAUSE:
@@ -94,21 +88,20 @@ extension TenTimePlayer: IMAAdsManagerDelegate {
         print("AdsManager error: " + (error.message ?? ""))
         //          showContentPlayer()
         isAdPlayback = false
-
-        player?.play()
+        playbackManager.play()
     }
     
     open func adsManagerDidRequestContentPause(_ adsManager: IMAAdsManager) {
         isAdPlayback = true
 
-        player?.pause()
+        playbackManager.pause()
 //        hideContentPlayer()
     }
     
     open func adsManagerDidRequestContentResume(_ adsManager: IMAAdsManager) {
         //          showContentPlayer()
         isAdPlayback = false
-        player?.play()
+        playbackManager.play()
     }
     
   

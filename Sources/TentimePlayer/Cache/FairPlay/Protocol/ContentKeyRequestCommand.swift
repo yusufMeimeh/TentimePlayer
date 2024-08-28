@@ -7,11 +7,9 @@
 
 import Foundation
 
-
 protocol ContentKeyRequestCommand {
     func execute(spcData: Data, contentId: String, completion: @escaping (Data?) -> Void)
 }
-
 
 struct ContentKeyRequestFromKSM: ContentKeyRequestCommand {
     func execute(spcData: Data, contentId: String, completion: @escaping (Data?) -> Void) {
@@ -24,7 +22,11 @@ struct ContentKeyRequestFromKSM: ContentKeyRequestCommand {
         //        print(finalStr)
         // Prepare to get the license i.e. CKC.
         // Make the POST request with customdata set to the authentication XML.
-        var request = URLRequest(url: URL(string: AssetManagerConstants.drmProxy)!)
+        guard let assetManagerConstantsURL =  URL(string: AssetManagerConstants.drmProxy) else {
+            completion(nil)
+            return
+        }
+        var request = URLRequest(url: assetManagerConstantsURL)
         request.httpMethod = HTTPMethod.post.rawValue
         request.addValue(ContentType.TypeFormURLEncode.rawValue, forHTTPHeaderField: HTTPHeaderField.contentType.rawValue)
         
@@ -35,14 +37,15 @@ struct ContentKeyRequestFromKSM: ContentKeyRequestCommand {
         session.dataTask(with: request) {data,_,error in
             if let data = data {
                 // The response from the KeyOS MultiKey License server may be an error inside JSON.
-                
                 do {
                     if error != nil {
-                        let parsedData = try JSONSerialization.jsonObject(with: data) as! [String: Any]
-                        let errorId = parsedData["errorid"] as! String
-                        let errorMsg = parsedData["errormsg"] as! String
-                        print(#function, "License request failed with an error: \(errorMsg) [\(errorId)]")
-                        
+                        guard let parsedData = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+                            print("Eror is ", error ?? "")
+                            return
+                        }
+                        let errorId = parsedData["errorid"] as? String
+                        let errorMsg = parsedData["errormsg"] as? String
+                        print(#function, "License request failed with an error: \(errorMsg ?? "") [\(errorId ?? "")]")
                     }
                 }catch {
                     //                print(#function, "The response may be a license. Moving on.")
@@ -52,7 +55,6 @@ struct ContentKeyRequestFromKSM: ContentKeyRequestCommand {
                     completion(nil)
                     return
                 }
-                
                 ckcData = data
             }else {
                 print(#function, error?.localizedDescription ?? "Error during CKC request.")
@@ -85,4 +87,3 @@ enum HTTPHeaderField: String {
     case acceptType = "Accept"
     case acceptEncoding = "Accept-Encoding"
 }
-

@@ -43,7 +43,6 @@ protocol MediaPlayer {
     func setPlaybackStrategy(_ strategy: any PlaybackStrategy) {
         self.playbackStrategy = strategy
     }
-    
 }
 
 

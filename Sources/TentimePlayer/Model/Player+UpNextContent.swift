@@ -50,14 +50,14 @@ extension TenTimePlayer {
     
     public func playNextItem() {
         guard let nextContent = getNextItem() else {return}
-        loadMedia(from: nextContent)
+        loadMediContent(nextContent)
         currentQueueIndex += 1
     }
     
     
     public func playPrevItem() {
         guard let nextContent = getPrevItem() else {return}
-        loadMedia(from: nextContent)
+        loadMediContent(nextContent)
         currentQueueIndex -= 1
     }
     

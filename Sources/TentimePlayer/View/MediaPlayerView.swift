@@ -122,9 +122,6 @@ public class MediaPlayerView: UIView {
         playerLayer.frame = bounds
         playerLayer.videoGravity = .resizeAspectFill
         playerContainerView?.layer.addSublayer(playerLayer)
-        if enablePipMode {
-            player.setupPipMode(playerLayer: playerLayer!)
-        }
         Task {
             audioTraks =  await player.getAvailableAudioTracks()
             subtitleTraks = await player.getAvailableSubtitleTracks()
@@ -216,35 +213,33 @@ public class MediaPlayerView: UIView {
         //        presenter?.playerWrapperHandler?.playerHandler?.playerManager.player?.allowsExternalPlayback = true
         
     }
-    
-    
-    
+
     private func playNextItem() {
         player.shouldShowUpNextContent = false
         upNextView.isHidden = true
         guard let nextContent = self.player.getNextItem() else {return}
-        player.loadMedia(from: nextContent)
+        player.loadMediContent(nextContent)
         player.currentQueueIndex += 1
         controllerContainerVIew?.isHidden = false
     }
     // Common functionality (e.g., play, pause, progress update)
     public func play() {
         // Implement play logic
-        player.play()
+     player.play()
     }
     
     public func pause() {
         // Implement pause logic
-        player.pause()
+      player.pause()
     }
     
     @IBAction func togglePlayPauseAction(_ sender: UIButton) {
-        player.togglePlayerPause()
+        player.togglePlayPause()
     }
     
     /// - Parameter sender:
     @IBAction func handleCurrentTimePlayerViewSlider(_ sender: UISlider) {
-        player.seek(percent: Double(sender.value))
+        player.seekByProgress( Double(sender.value))
         //        presenter?.didTriggerOnSeekedEvent(currentTime: Double(sender.value))
         //        keepControls = true
     }
@@ -334,14 +329,14 @@ extension MediaPlayerView {
     /// fast forward video to specific range time
     /// - Parameter sender:
     @IBAction func rewindForwardButton(_ sender: Any) {
-        player.seekToCurrentTime(delta: 10)
+        player.skipForward(10)
         //        keepControls = true
     }
     
     /// rewind video to specific range time
     /// - Parameter sender:
     @IBAction func rewindBackwardButton(_ sender: Any) {
-        player.seekToCurrentTime(delta: -10)
+        player.skipBackrward()
         //keepControls = true
     }
     
@@ -436,7 +431,10 @@ extension MediaPlayerView {
                 else {return}
                 self?.nextContent = data
                 self?.upNextView.isHidden = false
-                self?.upNextView.configure(with: data.thumbImage,data.movieName, data.description)
+                self?.upNextView.configure(
+                    with: data.thumbImage ?? "",
+                    data.movieName ?? "",
+                    data.description)
                 self?.upNextView.runTimer(with: self?.showNextItemBefore ?? 0)
                 self?.controllerContainerVIew?.isHidden = true
             })
@@ -451,7 +449,7 @@ extension MediaPlayerView {
             })
             .store(in: &cancellables)
         
-        player.$isPlay
+        player.$isCurrentlyPlaying
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: {[weak self]  isPlay in
                 guard let bundle = Bundle.module.path(forResource:isPlay ? "pause" : "play", ofType: "png"),
@@ -518,8 +516,6 @@ extension UIView {
             return nil
         }
     }
-    
-    
 }
 
 extension UIViewController {

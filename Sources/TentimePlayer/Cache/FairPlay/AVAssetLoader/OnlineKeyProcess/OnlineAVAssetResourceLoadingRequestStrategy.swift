@@ -11,9 +11,11 @@ struct OnlineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
 
     var loadingRequest: AVAssetResourceLoadingRequestProtocol
     var url: URL
-    var certifcateManager: CertificateManager
+    var certifcateManager: CertificateManaging
     var keyManager: KeyManager
     var assetName: String
+    let contentKeyRequest: ContentKeyRequestCommand
+
 
     func retriveKey(completion: @escaping (Result<AVContentKeyResponse?, any Error>) -> Void) {
         let contentId = url.host
@@ -21,7 +23,6 @@ struct OnlineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
         guard let fpsCertificate = certifcateManager.loadCachedCertificate() else {
             completion(.failure(DrmError.missingApplicationCertificate))
             loadingRequest.finishLoading(with: DrmError.missingApplicationCertificate)
-
             return
         }
         guard
@@ -38,7 +39,8 @@ struct OnlineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
 
             return
         }
-         ContentKeyManager.shared.requestContentKeyFromKeySecurityModule(spcData: spcData, contentId: contentId) { data in
+
+        contentKeyRequest.execute(spcData: spcData, contentId: contentId) { data in
             guard let ckcData = data else {
                 completion(.failure(DrmError.noCKCReturnedByKSM))
                 loadingRequest.finishLoading(with: DrmError.cannotEncodeCKCData)
@@ -72,10 +74,6 @@ struct OnlineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
              }
              loadingRequest.finishLoading()
              completion(.success(nil))
-             
         }
-        
-        
     }
-
 }

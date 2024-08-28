@@ -11,7 +11,6 @@ protocol AssetKeyHandler {
     func addAsset(name: String, isOfflinePlayback: Bool, asset: AVURLAsset)
 }
 
-
 class SimulatorAssetKeyHandler: AssetKeyHandler {
     func addAsset(name: String, isOfflinePlayback: Bool, asset: AVURLAsset) {
         AssetLoaderDeleagte.shared.addAsset(assetName: name,

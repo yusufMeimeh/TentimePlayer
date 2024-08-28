@@ -31,7 +31,7 @@ class OfflineAVAsseResourceLoaderTests: XCTestCase {
             case .success(_) :
                 XCTFail("Retrieve key should have failed due to missing certificate")
             case .failure(let error):
-                XCTAssertEqual(error as! DrmError, DrmError.missingApplicationCertificate)
+                XCTAssertEqual(error as? DrmError, DrmError.missingApplicationCertificate)
                 XCTAssertTrue(mockCertificateManager.loadCachedCertificateCalled)
                 XCTAssertNil(mockCertificateManager.storedCertificate)
                 XCTAssertFalse(mockReuqest.finishCalled)

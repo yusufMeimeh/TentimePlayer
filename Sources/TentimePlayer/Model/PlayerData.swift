@@ -7,20 +7,26 @@
 
 import Foundation
 
-open  class PlayerData: NSObject, ObservableObject {
-    let identifier: Int
-    let thumbImage: String
+open class PlayerData: NSObject, ObservableObject {
+    let identifier: String
+    let thumbImage: String?
     let moviePath: String
-    let movieName: String
+    let movieName: String?
     let elapsedTime: Double
     var subtitleType: String?
     var audioType: String?
     var offlinePath: String = ""
     var isAudio: Bool = false
-    var relatedWorks: [PlayerData]
-      
-      
-     public init(identifier: Int, thumbImage: String, moviePath: String, movieName: String, elapsedTime: Double, subtitleType: String? = nil, audioType: String? = nil, offlinePath: String = "", isAudio: Bool = false, relatedWorks: [PlayerData]) {
+
+    public init(identifier: String,
+                thumbImage: String? = nil,
+                moviePath: String,
+                movieName: String? = nil,
+                elapsedTime: Double = 0.0,
+                subtitleType: String? = nil,
+                audioType: String? = nil,
+                offlinePath: String = "",
+                isAudio: Bool = false) {
           self.identifier = identifier
           self.thumbImage = thumbImage
           self.moviePath = moviePath
@@ -30,7 +36,6 @@ open  class PlayerData: NSObject, ObservableObject {
           self.audioType = audioType
           self.offlinePath = offlinePath
           self.isAudio = isAudio
-          self.relatedWorks = relatedWorks
       }
 }
 

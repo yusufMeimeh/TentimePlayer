@@ -25,8 +25,6 @@ extension AVPlayer {
         //move player time to seekTime
 //        seek(to: seekTime)
         print("#####Curent Time ####", currentTime)
-
-        //        updateElapsedTime()
     }
     
     /// seek player to specific time

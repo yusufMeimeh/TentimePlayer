@@ -9,8 +9,8 @@
 import AVKit
 
 internal struct AssetManagerConstants {
-    static var drmProxy = ""
-    static var license = ""
+    static var drmProxy = "https://example.com/drm"
+    static var license =  "https://example.com/license"
 }
 
 
@@ -90,8 +90,6 @@ extension ContentKeyManager {
     func contentKeySession(_ session: AVContentKeySession, didProvide keyRequest: AVPersistableContentKeyRequest) {
         handleOfflineContentKeyRequest(keyRequest: keyRequest)
     }
-    
-    
     
     func requestContentKeyFromKeySecurityModule(spcData: Data, contentId: String, completion: @escaping (Data?) -> Void){
         let command = ContentKeyRequestFromKSM()

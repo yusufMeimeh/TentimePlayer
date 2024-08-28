@@ -7,11 +7,6 @@
 
 import UIKit
 import AVFoundation
-protocol AssetManager {
-    func loadAsset(name: String, url: URL, isOfflinePlayback: Bool, with keys: inout [String], completion: @escaping (Result<AVURLAsset, Error>) -> Void)
-}
-
-
 
 class PlayerAssetManager: AssetManager {
     private var keyHandler: AssetKeyHandler
