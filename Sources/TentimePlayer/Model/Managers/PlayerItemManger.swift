@@ -147,7 +147,7 @@ class PlayerItemManager: NSObject, PlayerItemManaging {
                 isBuffering = true
                 delegate?.playerItemManager(self, didUpdate: true)
             }
-        }else if  keyPath == #keyPath(AVPlayerItem.isPlaybackLikelyToKeepUp) || keyPath == #keyPath(AVPlayerItem.isPlaybackBufferFull) || keyPath == #keyPath(AVPlayerItem.tracks)  {
+        } else if  keyPath == #keyPath(AVPlayerItem.isPlaybackLikelyToKeepUp) || keyPath == #keyPath(AVPlayerItem.isPlaybackBufferFull) || keyPath == #keyPath(AVPlayerItem.tracks)  {
             if  (currentItem.isPlaybackBufferFull || currentItem.isPlaybackLikelyToKeepUp) && !freezing {
                 if isVideoAvailable(item: currentItem) {
                     isBuffering = false

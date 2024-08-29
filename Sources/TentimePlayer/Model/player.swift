@@ -147,7 +147,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
             isCurrentlyPlaying = player.rate != 0
             if isCurrentlyPlaying {
                 playbackManager.play()
-            }else {
+            } else {
                 playbackManager.pause()
             }
         case .stop:
@@ -227,7 +227,6 @@ open class TenTimePlayer: NSObject, ObservableObject {
     public func endPlayer() {
         cleanUpObservers()
         mediaPrepared = false
-        didFinishPlaying = false
         playbackManager.pause()
         notificationCenterManager.removeNotificationCenter()
         playerLayer?.removeFromSuperlayer()
@@ -313,7 +312,6 @@ extension TenTimePlayer: NotificationCenterManagerDelegate {
     }
 }
 
-
 extension TenTimePlayer: PlayerItemDelegate {
     func playerItemManager(_ playerItemManager: any PlayerItemManaging, didUpdate isLoad: Bool) {
         print("didUpdate  playerItemManager ", isLoad)
@@ -321,9 +319,9 @@ extension TenTimePlayer: PlayerItemDelegate {
 
         if !isLoad  {
             // Fix https://tentime.atlassian.net/browse/TTAB-22159
-            if  isCurrentlyPlaying  {
+            if isCurrentlyPlaying  {
                 self.play()
-            }else {
+            } else {
                 self.pause()
             }
         }

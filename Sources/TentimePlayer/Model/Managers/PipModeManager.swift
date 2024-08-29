@@ -33,7 +33,7 @@ class PipModeManager: NSObject, PipModeManaging {
             if #available(iOS 14.0, *) {
                 pictureInPictureController?.requiresLinearPlayback = true
             }
-        }else {
+        } else {
            isPipModeEnabled = false
         }
     }
@@ -81,7 +81,7 @@ extension PipModeManager: AVPictureInPictureControllerDelegate {
         isPipModeStarted = false
         if pipModeStatus != .restoreUserInterface {
             pipModeStatus = .end
-        }else {
+        } else {
             pipModeStatus = .stop
         }
     }
@@ -96,7 +96,7 @@ extension PipModeManager: AVPictureInPictureControllerDelegate {
 //        isCurrentlyPlaying = player.rate != 0
 //        if isCurrentlyPlaying {
 //            playbackManager.play()
-//        }else {
+//        } else {
 //            playbackManager.pause()
 //        }
         pipCompletionHandler = completionHandler

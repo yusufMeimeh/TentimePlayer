@@ -56,7 +56,7 @@ struct ContentKeyRequestFromKSM: ContentKeyRequestCommand {
                     return
                 }
                 ckcData = data
-            }else {
+            } else {
                 print(#function, error?.localizedDescription ?? "Error during CKC request.")
                 
             }

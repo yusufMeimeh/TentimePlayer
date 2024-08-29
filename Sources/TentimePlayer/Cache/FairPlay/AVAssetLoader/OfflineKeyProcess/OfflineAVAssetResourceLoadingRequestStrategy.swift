@@ -35,7 +35,7 @@ struct OfflineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
             loadingRequest.finishLoading()
             completion(.success(contentKey))
             return
-        }else {
+        } else {
             loadingRequest.finishLoading(with: DrmError.unableToGeneratePersistentKey)
             completion(.failure(DrmError.unableToGeneratePersistentKey))
         }

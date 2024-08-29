@@ -1,6 +1,6 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Qamar Al Amassi on 12/08/2024.
 //
@@ -11,12 +11,14 @@ extension TenTimePlayer {
     @discardableResult
     public func play() -> TenTimePlayer {
         playbackManager.play()
+        isCurrentlyPlaying = playbackManager.isCurrentlyPlaying
         return self
     }
-    
+
     @discardableResult
     public func pause() -> TenTimePlayer {
         playbackManager.pause()
+        isCurrentlyPlaying = playbackManager.isCurrentlyPlaying
         return self
     }
 
@@ -39,7 +41,7 @@ extension TenTimePlayer {
         isMuted.toggle()
         if isMuted {
             playbackManager.mute()
-        }else {
+        } else {
             playbackManager.unmute()
         }
         return self
@@ -54,8 +56,8 @@ extension TenTimePlayer {
 
     @discardableResult
     public func loadMediContent(_ playerData: PlayerData,
-                         autoPlay: Bool = false,
-                         mute: Bool = false) -> TenTimePlayer {
+                                autoPlay: Bool = false,
+                                mute: Bool = false) -> TenTimePlayer {
         self.playerData = playerData
         loaderManager.loadMedia(from: playerData) {[weak self] (result: Result<PlayerItemManager?,Error>) in
             guard let self = self else {return}
@@ -68,10 +70,11 @@ extension TenTimePlayer {
                     mute ? self.playbackManager.mute() : self.playbackManager.unmute()
                     autoPlay ? self.playbackManager.play() : self.playbackManager.pause()
                     self.player.seek(second: playerData.elapsedTime)
-                     self.resetPlayerItemValues()
+                    self.resetPlayerItemValues()
                     self.notificationCenterManager.updateNowPlayableDynamicMetadata(isCurrentlyPlaying: autoPlay)
                     self.mediaPrepared = true
                     self.isCurrentlyPlaying = autoPlay
+
                 }
             case .failure(let failure):
                 //add handling error
@@ -102,7 +105,7 @@ extension TenTimePlayer {
         self.handleProgresSeeking(finished: true,
                                   wasPlay: wasPlay)
     }
-    
+
     @discardableResult
     public func skipForward(_ delta: Int64 = 10) -> TenTimePlayer {
         skipingHandle(delta)
@@ -111,7 +114,7 @@ extension TenTimePlayer {
 
     @discardableResult
     public func skipBackrward(_ delta: Int64 = -10) -> TenTimePlayer {
-       skipingHandle(delta)
+        skipingHandle(delta)
         return self
     }
 
@@ -162,7 +165,8 @@ extension TenTimePlayer {
     @discardableResult
     public func updateLayerBounds(to frame: CGRect) -> TenTimePlayer {
         playerLayer?.frame = frame
-        playerLayer?.layoutSublayers()
+        print("Player Layer is ", playerLayer , " Frame ", frame)
+        //        playerLayer?.layoutSublayers()
         return self
     }
 
@@ -170,5 +174,21 @@ extension TenTimePlayer {
     public func startPipMode() -> TenTimePlayer {
         pipModeManager.startPipMode()
         return self
+    }
+
+    @discardableResult
+    public func increaseSpeed(to rate: Float) -> TenTimePlayer {
+//        let currentRate = player.rate
+//        let newRate = currentRate + value
+        player.rate = rate
+        print("Player speed increased to ", rate)
+        return self
+    }
+
+
+    public func currentPlayingContentID() -> String? {
+//        let currentRate = player.rate
+//        let newRate = currentRate + value
+        return playerData?.identifier
     }
 }

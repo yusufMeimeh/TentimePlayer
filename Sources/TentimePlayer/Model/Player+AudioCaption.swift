@@ -61,7 +61,7 @@ extension TenTimePlayer {
 //            if let subtitleOptions = subtitleOptions {
 //                if let option = subtitleOptions[safe:index] {
 //                    playerItem?.ad_select(mediaSelectionOption: option, for: .legible, isOffline: isOffline)
-//                }else{
+//                } else{
 //                    playerItem?.ad_select(mediaSelectionOption: nil, for: .legible, isOffline: isOffline)
 //                }
 //            }

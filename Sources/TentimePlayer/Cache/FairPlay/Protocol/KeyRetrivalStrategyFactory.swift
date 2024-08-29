@@ -15,7 +15,7 @@ struct KeyRetrivalStrategyFactory {
         if isOfflinePlayback,
             let keyRequest = keyRequest as? AVPersistableContentKeyRequest {
             return OfflineKeyRetrivalStrategy(keyRequest: keyRequest, assetName: assetName, certifcateManager: certifcateManager)
-        }else {
+        } else {
             return OnlineAVContentKeyRetrivalStrategy(keyRequest: keyRequest, certifcateManager: certifcateManager)
         }
     }

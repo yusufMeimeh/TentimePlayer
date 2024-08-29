@@ -405,7 +405,7 @@ extension MediaPlayerView {
             .sink(receiveValue: {[weak self]  isLoading in
                 if isLoading {
                     self?.activityIndicator?.startAnimating()
-                }else {
+                } else {
                     self?.activityIndicator?.stopAnimating()
                 }
             })
@@ -476,9 +476,7 @@ extension MediaPlayerView {
                 }
             })
             .store(in: &cancellables)
-        
-        
-        
+                
         player.$pipModeStatus
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: {[weak self] status in

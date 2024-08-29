@@ -164,7 +164,7 @@ class UpNextContentView: UIView {
             
             if timeLeft < 1 &&  timeLeft > 0 {
                 timerLabel.text = "\(Int(timeLeft.rounded(.up)))" + "seconds"
-            }else {
+            } else {
                 timerLabel.text = "\(Int(timeLeft.rounded(.up)))"
             }
         } else {

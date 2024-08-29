@@ -40,7 +40,7 @@ class PlaybackManager: PlaybackManaging {
     public func togglePlayPause() {
         if isCurrentlyPlaying {
             pause()
-        }else {
+        } else {
             play()
         }
     }

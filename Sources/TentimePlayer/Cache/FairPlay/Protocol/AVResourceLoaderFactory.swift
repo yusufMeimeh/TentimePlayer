@@ -17,7 +17,7 @@ struct AVAssetLoaderRetrivalStrategyFactory {
 //        if isOfflinePlayback {
             return OfflineAVAssetResourceLoadingRequestStrategy(loadingRequest: loadingRequest, url: url, certifcateManager: certifcateManager,
                                                                 keyManager: keyManager, assetName: assetName)
-//        }else {
+//        } else {
 //            return OnlineAVAssetResourceLoadingRequestStrategy(loadingRequest: loadingRequest,
 //                                                               url: url, certifcateManager: certifcateManager, keyManager: keyManager, assetName: assetName)
 //        }
