@@ -167,9 +167,17 @@ extension TenTimePlayer {
         playerLayer?.frame = frame
         print("Player Layer is ", playerLayer , " Frame ", frame)
         //        playerLayer?.layoutSublayers()
+        // Check parent layer
+            if let parentLayer = playerLayer?.superlayer {
+                print("Player layer's parent layer is: \(parentLayer)")
+            } else {
+                print("Player layer has no parent layer.")
+            }
         return self
     }
-
+    public func attachedToParent() -> Bool {
+        playerLayer?.superlayer != nil
+    }
     @discardableResult
     public func startPipMode() -> TenTimePlayer {
         pipModeManager.startPipMode()
