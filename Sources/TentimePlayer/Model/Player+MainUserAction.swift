@@ -77,6 +77,7 @@ extension TenTimePlayer {
             case .success(let playerItem):
                 DispatchQueue.main.async {
                     self.observeRquiredItem()
+                    self.playbackStatus = autoPlay ? .play : .pause
                     self.playerItemManager = playerItem
                     self.playerItemManager?.delegate = self
                     mute ? self.playbackManager.mute() : self.playbackManager.unmute()
@@ -204,7 +205,6 @@ extension TenTimePlayer {
     }
 
     public func playStatus() -> PlaybackStatus {
-
         return playbackStatus
     }
 }

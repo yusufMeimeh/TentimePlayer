@@ -323,9 +323,7 @@ extension TenTimePlayer: PlayerItemDelegate {
             // Fix https://tentime.atlassian.net/browse/TTAB-22159
             if isCurrentlyPlaying  {
                 self.play()
-            } else {
-                self.pause()
-            }
+            } 
         }
     }
     
