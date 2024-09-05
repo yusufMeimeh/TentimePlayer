@@ -33,7 +33,9 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     var playerData : PlayerData?
 
-    @Published  public var isCurrentlyPlaying: Bool = true
+    @Published public var isCurrentlyPlaying: Bool = true
+
+    @Published public var playbackStatus: PlaybackStatus = .play
 
     var supposedCurrentTime: CMTime?
 

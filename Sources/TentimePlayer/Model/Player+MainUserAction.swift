@@ -7,18 +7,29 @@
 
 import AVFoundation
 import UIKit
+
 extension TenTimePlayer {
     @discardableResult
     public func play() -> TenTimePlayer {
         playbackManager.play()
-        isCurrentlyPlaying = playbackManager.isCurrentlyPlaying
+        isCurrentlyPlaying = playbackManager.playbackStatus == .play
+        playbackStatus = playbackManager.playbackStatus
         return self
     }
 
     @discardableResult
     public func pause() -> TenTimePlayer {
         playbackManager.pause()
-        isCurrentlyPlaying = playbackManager.isCurrentlyPlaying
+        isCurrentlyPlaying = playbackManager.playbackStatus == .play
+        playbackStatus = playbackManager.playbackStatus
+        return self
+    }
+
+    @discardableResult
+    public func forcePause() -> TenTimePlayer {
+        playbackManager.pause()
+        isCurrentlyPlaying = playbackManager.playbackStatus == .play
+        playbackStatus = playbackManager.playbackStatus
         return self
     }
 
@@ -50,7 +61,7 @@ extension TenTimePlayer {
     @discardableResult
     public func togglePlayPause() -> TenTimePlayer {
         playbackManager.togglePlayPause()
-        isCurrentlyPlaying = playbackManager.isCurrentlyPlaying
+        isCurrentlyPlaying = playbackManager.playbackStatus == .play
         return self
     }
 
@@ -97,7 +108,7 @@ extension TenTimePlayer {
     }
 
     fileprivate func skipingHandle(_ delta: Int64) {
-        let wasPlay = playbackManager.isCurrentlyPlaying
+        let wasPlay = playbackManager.playbackStatus == .play
         if wasPlay {
             playbackManager.pause()
         }
@@ -120,7 +131,7 @@ extension TenTimePlayer {
 
     @discardableResult
     public func seekByProgress(_ value: Float64) -> TenTimePlayer {
-        let wasPlay = playbackManager.isCurrentlyPlaying
+        let wasPlay = isCurrentlyPlaying
         if wasPlay {
             playbackManager.pause()
         }
@@ -165,14 +176,6 @@ extension TenTimePlayer {
     @discardableResult
     public func updateLayerBounds(to frame: CGRect) -> TenTimePlayer {
         playerLayer?.frame = frame
-        print("Player Layer is ", playerLayer , " Frame ", frame)
-        //        playerLayer?.layoutSublayers()
-        // Check parent layer
-            if let parentLayer = playerLayer?.superlayer {
-                print("Player layer's parent layer is: \(parentLayer)")
-            } else {
-                print("Player layer has no parent layer.")
-            }
         return self
     }
     public func attachedToParent() -> Bool {
@@ -192,7 +195,6 @@ extension TenTimePlayer {
         print("Player speed increased to ", rate)
         return self
     }
-
 
     public func currentPlayingContentID() -> String? {
 //        let currentRate = player.rate

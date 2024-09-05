@@ -7,7 +7,7 @@
 
 import AVKit
 protocol PlaybackManaging {
-    var isCurrentlyPlaying: Bool {get set}
+    var playbackStatus: PlaybackStatus {get set}
     func play()
     func pause()
     func togglePlayPause()
@@ -16,11 +16,16 @@ protocol PlaybackManaging {
     func skipBackward(by seconds: Double)
     func mute()
     func unmute()
+    func forceStop()
 }
-
+public enum PlaybackStatus {
+    case play
+    case pause
+    case forceStop
+}
 class PlaybackManager: PlaybackManaging {
-    var isCurrentlyPlaying: Bool = false
-
+//    var isCurrentlyPlaying: Bool = false
+    var playbackStatus: PlaybackStatus = .play
     let player: AVPlayer
 
     init(player: AVPlayer) {
@@ -29,16 +34,18 @@ class PlaybackManager: PlaybackManaging {
 
     public func play() {
         player.play()
-        isCurrentlyPlaying = true
+        playbackStatus = .play
+//        isCurrentlyPlaying = true
     }
 
     public func pause() {
         player.pause()
-        isCurrentlyPlaying = false
+        playbackStatus = .pause
+//        isCurrentlyPlaying = false
     }
 
     public func togglePlayPause() {
-        if isCurrentlyPlaying {
+        if playbackStatus == .play {
             pause()
         } else {
             play()
@@ -64,4 +71,11 @@ class PlaybackManager: PlaybackManaging {
     func unmute() {
         player.isMuted = false
     }
+
+
+    func forceStop() {
+        playbackStatus = .forceStop
+        player.pause()
+    }
+
 }
