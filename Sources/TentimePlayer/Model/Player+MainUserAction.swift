@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  TenTimePlayer.swift
 //
 //
 //  Created by Qamar Al Amassi on 12/08/2024.
@@ -27,11 +27,12 @@ extension TenTimePlayer {
 
     @discardableResult
     public func forcePause() -> TenTimePlayer {
-        playbackManager.pause()
+        playbackManager.forceStop()
         isCurrentlyPlaying = playbackManager.playbackStatus == .play
         playbackStatus = playbackManager.playbackStatus
         return self
     }
+
 
     @discardableResult
     public func mute() -> TenTimePlayer {
@@ -200,5 +201,10 @@ extension TenTimePlayer {
 //        let currentRate = player.rate
 //        let newRate = currentRate + value
         return playerData?.identifier
+    }
+
+    public func playStatus() -> PlaybackStatus {
+
+        return playbackStatus
     }
 }
