@@ -21,15 +21,6 @@ class TenTimeNowPlayable: NowPlayable {
         setNowPlayingPlaybackInfo(metadata)
     }
     
-    func handleNowPlayableSessionStart() {
-        do {
-            let audioSession = AVAudioSession.sharedInstance()
-            try audioSession.setCategory(AVAudioSession.Category.playback, mode: .moviePlayback)
-            try audioSession.setActive(true)
-        }catch {
-            print("Audio session failed")
-        }
-    }
     
     func removeNotificationCenter(commands: [NowPlayableCommand]) {
         MPNowPlayingInfoCenter.default().nowPlayingInfo = [:]

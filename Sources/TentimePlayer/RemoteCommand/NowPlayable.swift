@@ -18,8 +18,6 @@ protocol NowPlayable {
                                         disabledCommands: [NowPlayableCommand],
                                         commandHandler: @escaping (NowPlayableCommand, MPRemoteCommandEvent) -> MPRemoteCommandHandlerStatus)
     func removeNotificationCenter(commands: [NowPlayableCommand])
-    func handleNowPlayableSessionStart()
-    
 }
 
 

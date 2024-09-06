@@ -121,11 +121,20 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
         super.init()
         contentPlayhead = IMAAVPlayerContentPlayhead(avPlayer: player)
-
+        handleSessionStart()
         setUpAdsLoader()
         notificationCenterManager.delegate = self
     }
 
+    func handleSessionStart() {
+        do {
+            let audioSession = AVAudioSession.sharedInstance()
+            try audioSession.setCategory(AVAudioSession.Category.playback, mode: .moviePlayback)
+            try audioSession.setActive(true)
+        }catch {
+            print("Audio session failed")
+        }
+    }
     private func observerPipStatus(){
         bind(pipModeManager.$pipModeStatus,
              to: handlePipMode,

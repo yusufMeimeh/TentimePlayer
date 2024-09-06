@@ -40,7 +40,6 @@ class NotificationCenterManager: NotificationCenterManaging {
 
     func reinstallCommandsMetadeta(playerData: PlayerData) {
         addNotificationCenterCommands()
-
         updatePlayableStaticMetdata(playerData)
     }
 
@@ -80,7 +79,6 @@ class NotificationCenterManager: NotificationCenterManaging {
 
     public func setupCommands(supportedCommand: [NowPlayableCommand]) {
         self.supportedCommand = supportedCommand
-        nowPlayable?.handleNowPlayableSessionStart()
         addNotificationCenterCommands()
     }
 
