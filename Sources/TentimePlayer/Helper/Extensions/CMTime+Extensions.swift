@@ -7,8 +7,8 @@
 
 import AVFoundation
 
-extension CMTime{
-    func toDisplayString() -> String{
+extension CMTime {
+    func toDisplayString() -> String {
         if CMTimeGetSeconds(self).isNaN {
             return ""
         }

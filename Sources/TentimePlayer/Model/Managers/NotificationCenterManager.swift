@@ -37,7 +37,6 @@ class NotificationCenterManager: NotificationCenterManaging {
             metadata: nowPlayableDynamicMetadata)
     }
 
-
     func reinstallCommandsMetadeta(playerData: PlayerData) {
         addNotificationCenterCommands()
         updatePlayableStaticMetdata(playerData)
@@ -94,8 +93,6 @@ class NotificationCenterManager: NotificationCenterManaging {
             albumArtist: nil,
             albumTitle: nil)
     }
-
-    
 
     func removeNotificationCenter() {
         nowPlayable?.removeNotificationCenter(commands: supportedCommand )

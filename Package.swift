@@ -62,6 +62,6 @@ let package = Package(
             dependencies: ["TentimePlayer"],
             sources: ["TentimePlayerTests/FairPlayTest",
                       "TentimePlayerTests/Mock"]
-        ),
-        ]
+        )
+    ]
 )

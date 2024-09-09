@@ -16,7 +16,6 @@ struct OnlineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
     var assetName: String
     let contentKeyRequest: ContentKeyRequestCommand
 
-
     func retriveKey(completion: @escaping (Result<AVContentKeyResponse?, any Error>) -> Void) {
         let contentId = url.host
         //handle missing certificate
@@ -52,7 +51,7 @@ struct OnlineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
 
              do {
                   persistentKeyData = try loadingRequest.persistentContentKey(fromKeyVendorResponse: ckcData)
-             }catch {
+             } catch {
                  print("Failed to get persistent key with error: \(error)")
                   loadingRequest.finishLoading(with: DrmError.unableToGeneratePersistentKey)
                  completion(.failure(DrmError.unableToGeneratePersistentKey))
@@ -69,7 +68,7 @@ struct OnlineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
              }
              do {
                 try self.keyManager.writePersistableContentKey(contentKey: persistentKeyData, withAssetName: self.assetName, withContentKeyIV: contentIdentifier)
-             }catch {
+             } catch {
                  print("Cannot save content key", error)
              }
              loadingRequest.finishLoading()

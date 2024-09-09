@@ -15,7 +15,7 @@ class LoadManager: LoadManaging {
     }
 
     public func loadMedia(from playerData: PlayerData,
-                          completion: (@escaping  (Result<PlayerItemManager?,Error>) -> Void)) {
+                           completion: (@escaping  (Result<PlayerItemManager?, Error>) -> Void)) {
         player.automaticallyWaitsToMinimizeStalling = false
 //        isCurrentlyPlaying = autoPlay
         guard let url = URL(string: playerData.moviePath) else {return}
@@ -35,12 +35,9 @@ class LoadManager: LoadManaging {
             case .success(let assets):
                 let playerItem = PlayerItemManager()
                 let avplayerItem = playerItem.setupPlayerItem(with: assets)
-
-        //        playerItem?.delegate = self
                 self.player.replaceCurrentItem(with: avplayerItem)
-                playerItem.observableAttributes = [.status,.isPlaybackBufferEmpty,.isPlaybackBufferFull,.isPlaybackLikelyToKeepUp, .track]
+
                 completion(.success(playerItem))
-//                self.resetPlayerItemValues()
             }
         }
     }

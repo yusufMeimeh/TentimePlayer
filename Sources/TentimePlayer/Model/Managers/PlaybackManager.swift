@@ -72,7 +72,6 @@ class PlaybackManager: PlaybackManaging {
         player.isMuted = false
     }
 
-
     func forceStop() {
         playbackStatus = .forceStop
         player.pause()

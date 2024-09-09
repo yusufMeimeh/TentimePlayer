@@ -47,7 +47,11 @@ class PipModeManager: NSObject, PipModeManaging {
 
     }
     
-    open override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    open override func observeValue(
+        forKeyPath keyPath: String?,
+        of object: Any?,
+        change: [NSKeyValueChangeKey: Any]?,
+        context: UnsafeMutableRawPointer?) {
         if keyPath == #keyPath(AVPictureInPictureController.isPictureInPicturePossible) {
             guard let newValue = change?[NSKeyValueChangeKey.newKey] as? NSNumber else {return}
             let isPictureInPicturePossible: Bool = newValue.boolValue
@@ -59,7 +63,7 @@ class PipModeManager: NSObject, PipModeManaging {
 
     func cleanUpObserver() {
         pictureInPictureController?.removeObserver(self,
-                                                   forKeyPath:        #keyPath(AVPictureInPictureController.isPictureInPicturePossible),
+                                                   forKeyPath: #keyPath(AVPictureInPictureController.isPictureInPicturePossible),
                                                    context: &playerViewControllerKVOContext)
     }
 

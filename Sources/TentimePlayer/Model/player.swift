@@ -131,7 +131,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
             let audioSession = AVAudioSession.sharedInstance()
             try audioSession.setCategory(AVAudioSession.Category.playback, mode: .moviePlayback)
             try audioSession.setActive(true)
-        }catch {
+        } catch {
             print("Audio session failed")
         }
     }

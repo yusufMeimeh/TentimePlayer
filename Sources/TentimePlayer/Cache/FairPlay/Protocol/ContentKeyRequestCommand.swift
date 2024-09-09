@@ -47,7 +47,7 @@ struct ContentKeyRequestFromKSM: ContentKeyRequestCommand {
                         let errorMsg = parsedData["errormsg"] as? String
                         print(#function, "License request failed with an error: \(errorMsg ?? "") [\(errorId ?? "")]")
                     }
-                }catch {
+                } catch {
                     //                print(#function, "The response may be a license. Moving on.")
                     
                 }

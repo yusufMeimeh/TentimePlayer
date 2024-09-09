@@ -51,7 +51,7 @@ struct OfflineKeyRetrivalStrategy: KeyRetrivalStrategy, PersistableContentKeyUpd
                     
                     let keyResponse = AVContentKeyResponse(fairPlayStreamingKeyResponseData: persistentKey)
                     completion(.success(keyResponse))
-                }catch {
+                } catch {
                     completion(.failure(error))
                     
                 }
