@@ -36,7 +36,8 @@ class LoadManager: LoadManaging {
                 let playerItem = PlayerItemManager()
                 let avplayerItem = playerItem.setupPlayerItem(with: assets)
                 self.player.replaceCurrentItem(with: avplayerItem)
-
+                playerItem.observableAttributes = [.status,.isPlaybackBufferEmpty,.isPlaybackBufferFull,.isPlaybackLikelyToKeepUp, .track]
+                playerItem.delegate = self
                 completion(.success(playerItem))
             }
         }
