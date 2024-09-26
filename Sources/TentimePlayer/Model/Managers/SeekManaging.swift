@@ -96,4 +96,5 @@ class SeekManager: SeekManaging {
         let time = player.currentTime
         return CMTimeGetSeconds(time())
     }
+    
 }

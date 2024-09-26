@@ -31,6 +31,7 @@ let package = Package(
                       "Model",
                       "Helper",
                       "Model/Managers",
+                      "Model/Player",
                       "Helper/Extensions",
                       "RemoteCommand",
                       "View",

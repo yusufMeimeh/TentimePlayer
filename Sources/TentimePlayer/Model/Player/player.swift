@@ -29,17 +29,11 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     var playerItem: AVPlayerItem?
 
-    var isSeeking = false
-
     var playerData : PlayerData?
 
     @Published public var isCurrentlyPlaying: Bool = true
 
     @Published public var playbackStatus: PlaybackStatus = .play
-
-    var supposedCurrentTime: CMTime?
-
-    var timeObserverToken: Any?
 
     var queueItem: [PlayerData] = []
 
@@ -48,8 +42,6 @@ open class TenTimePlayer: NSObject, ObservableObject {
     @Published public var isLoading: Bool = false
 
     @Published public var mediaPrepared: Bool = false
-
-    @Published public var didUpdateTime: (String, String, Double, Double)?
 
     @Published public var isPipModeEnabled: Bool = false
 
@@ -61,15 +53,9 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     @Published public var pipModeStatus: PipModeStatus?
 
-    @Published public var progressValue: Double = 0.0
-
-    @Published public var durationTimeFormatted: String = ""
-
-    @Published public var durationSeconds: Double = 0.0
-
-    @Published public var currentTimeFormatted: String = ""
-
     @Published public var isMuted: Bool = false
+
+    @Published public var timeObservation: TimeObservation = TimeObservation()
 
     var remainingTime: Double = 0
 
@@ -97,11 +83,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
     public var showUpNextContent: Bool = false
 
     var currentIndex = 0
-
-    var currentTime: CMTime?
-
-    var pipCompletionHandler: ((Bool) -> Void)?
-
+    
     internal var drmManager: DRMManager
     internal var playbackManager: PlaybackManaging
     internal var loaderManager: LoadManaging
@@ -110,6 +92,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
     internal var pipModeManager: PipModeManager
     var cancallable = Set<AnyCancellable>()
     internal var playerItemManager: PlayerItemManager?
+    internal var timeObserverManager: TimeObserverManaging
 
     override init() {
         self.drmManager = DRMManager()
@@ -117,6 +100,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
         self.loaderManager = LoadManager(player: player)
         self.notificationCenterManager = NotificationCenterManager()
         self.seekManager = SeekManager(player: player)
+        self.timeObserverManager = TimeObservationManager(player: player)
         self.pipModeManager = PipModeManager()
 
         super.init()
@@ -135,6 +119,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
             print("Audio session failed")
         }
     }
+
     private func observerPipStatus(){
         bind(pipModeManager.$pipModeStatus,
              to: handlePipMode,
@@ -143,9 +128,17 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     func observeRquiredItem() {
         self.observePlayCurrentTime()
+        setupNotificationObservers()
+    }
 
+    func setupNotificationObservers() {
         NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
     }
+
+    func removeNotificationObservers() {
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
+    }
+
 
     private func handlePipMode(_ status: PipModeStatus?) {
         self.pipModeStatus = pipModeManager.pipModeStatus
@@ -193,33 +186,9 @@ open class TenTimePlayer: NSObject, ObservableObject {
     }
 
     func observePlayCurrentTime() {
-        guard timeObserverToken == nil, !isSeeking else { return }
-        let interval = CMTimeMake(value: 1, timescale: 2)
-
-        timeObserverToken =  player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] (time) in
-            guard let self =  self else {return}
-            didUpdateTime = (time.toDisplayString(),
-                             self.player.currentItem?.duration.toDisplayString() ?? "00:00",
-                             time.seconds,
-                             self.player.currentItem?.duration.seconds ?? 0.0
-            )
-            guard let playerItem = player.currentItem else {return}
-
-            self.currentTime = time
-
-            let duration = Float(playerItem.duration.seconds)
-
-            self.progressValue = Double((currentTime?.seconds ?? 0) /  Double(duration))
-
-            self.currentTimeFormatted = time.toDisplayString()
-            self.durationTimeFormatted =   self.player.currentItem?.duration.toDisplayString() ?? "00:00"
-
-            let cTime = CMTimeGetSeconds(self.player.currentTime())
-            updateNotificationCenterData(cTime, playerItem)
-            if showUpNextContent {
-                handleUpNext(currentTime: currentTime?.seconds ?? 0, duration: Double(duration))
-            }
-            self.supposedCurrentTime = time
+        timeObserverManager.startObserving(interval: CMTimeMake(value: 1, timescale: 2))
+        timeObserverManager.onTimeUpdate = {[weak self] timeObservation in
+            self?.timeObservation = timeObservation
         }
     }
 
@@ -229,10 +198,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     private func cleanUpObservers() {
         //remove player periodic observer
-        if let timeObserverToken = timeObserverToken {
-            player.removeTimeObserver(timeObserverToken)
-            self.timeObserverToken = nil
-        }
+        timeObserverManager.stopObserving()
     }
 
     public func endPlayer() {
@@ -243,52 +209,28 @@ open class TenTimePlayer: NSObject, ObservableObject {
         playerLayer?.removeFromSuperlayer()
         player.replaceCurrentItem(with: nil)
         playerItemManager = nil
-        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
-
+        removeNotificationObservers()
         print("end player step")
-        //        player = nil
-        //        currentlyPlayingURL = nil
-        //        cleanUpObservers()
     }
 
     internal func handleProgresSeeking(finished: Bool, wasPlay: Bool) {
         if finished, let supposedCurrentTime = seekManager.supposedCurrentTime {
-            self.didUpdateTime = (supposedCurrentTime.toDisplayString(),
-                                  self.player.currentItem?.duration.toDisplayString() ?? "00:00",
-                                  supposedCurrentTime.seconds,
-                                  self.player.currentItem?.duration.seconds ?? 0.0)
-            let duration = Float(self.player.currentItem?.duration.seconds ?? 0.0)
-            self.progressValue = Double((self.supposedCurrentTime?.seconds ?? 0) / Double(duration))
-
-            self.currentTimeFormatted = supposedCurrentTime.toDisplayString()
-            self.durationTimeFormatted = self.player.currentItem?.duration.toDisplayString() ?? "00:00"
-            if wasPlay{
-                self.playbackManager.play()
-            }
+            updatePlayerState(for: supposedCurrentTime)
         }
     }
 
-    internal func handleSeekToEnd() {
-        guard let duration = player.currentItem?.duration  else { return}
-        self.currentTimeFormatted = currentTime?.toDisplayString() ?? ""
-        self.durationTimeFormatted =  duration.toDisplayString()
-        self.progressValue = 1
-        didFinishPlaying = true
-    }
-    
-    internal func handleSeekToBegin() {
-        didUpdateTime = ("00:00",
-                         player.currentItem?.duration.toDisplayString() ?? "00:00",
-                         0,
-                         durationTimeSeconds: player.currentItem?.duration.seconds ?? 0.0)
-        self.progressValue = 0.0
-
-        self.currentTimeFormatted = "00:00"
-        self.durationTimeFormatted =   self.player.currentItem?.duration.toDisplayString() ?? "00:00"
-    }
     public func configureDRM(drmProxy: String, licenseURL: String) {
         drmManager.configureDRM(drmProxy: drmProxy, licenseURL: licenseURL)
     }
+
+    func updatePlayerState(for time: CMTime) {
+        guard let playerItem = player.currentItem 
+        else { return }
+
+        self.timeObservation =  timeObserverManager.calculateTimeObservation(for: time)
+        updateNotificationCenterData(time.seconds, playerItem)
+    }
+
     internal func resetPlayerItemValues() {
         didFinishPlaying = false
         pipModeStatus = nil
@@ -298,43 +240,5 @@ open class TenTimePlayer: NSObject, ObservableObject {
     deinit {
         cleanUpObservers()
     }
-
-}
-
-extension TenTimePlayer: NotificationCenterManagerDelegate {
-    func playFromNotificationCenter() {
-        playbackManager.play()
-    }
-
-    func pauseFromNotificationCenter() {
-        playbackManager.pause()
-    }
-
-    func skipForwardFromNotificationCenter() {
-
-    }
-
-    func skipBackwardFromNotificationCenter() {
-
-    }
-
-    func seekFromNotificationCenter(to time: CMTime) {
-
-    }
-}
-
-extension TenTimePlayer: PlayerItemDelegate {
-    func playerItemManager(_ playerItemManager: any PlayerItemManaging, didUpdate isLoad: Bool) {
-        print("didUpdate  playerItemManager ", isLoad)
-        self.isLoading = isLoad
-
-        if !isLoad  {
-            // Fix https://tentime.atlassian.net/browse/TTAB-22159
-            if isCurrentlyPlaying  {
-                self.play()
-            } 
-        }
-    }
-    
 
 }

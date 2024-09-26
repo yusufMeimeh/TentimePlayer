@@ -141,7 +141,6 @@ extension TenTimePlayer {
                          completion: { finished in
             self.handleProgresSeeking(finished: finished,
                                       wasPlay: wasPlay)
-
         })
         return self
     }
@@ -149,14 +148,14 @@ extension TenTimePlayer {
     @discardableResult
     public func seekToEnd() -> TenTimePlayer {
         seekManager.seekToEnd()
-        handleSeekToEnd()
+        updatePlayerState(for: player.currentItem?.duration ?? .zero)
         return self
     }
 
     @discardableResult
     public func seekToBegin() -> TenTimePlayer {
         seekManager.seekToBeginning()
-        handleSeekToBegin()
+        updatePlayerState(for: .zero)
         return self
     }
 

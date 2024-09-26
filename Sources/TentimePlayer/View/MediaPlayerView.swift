@@ -460,40 +460,41 @@ extension MediaPlayerView {
                 self?.playPauseButton?.setImage(image, for: .normal)
             })
             .store(in: &cancellables)
-        
-        player.$didUpdateTime
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: {[weak self] updatedTimeInfo in
-                DispatchQueue.main.async {
-                    guard let updatedTimeInfo = updatedTimeInfo else {return}
-                    let currentTimeSeconds = updatedTimeInfo.2
-                    let durationTimeSeconds =  updatedTimeInfo.3
-                    let currentTime = updatedTimeInfo.0
-                    let duration = updatedTimeInfo.1
-                    self?.progressBar?.value = Float(currentTimeSeconds / durationTimeSeconds)
-                    self?.currentTimeLabel?.text = currentTime
-                    self?.durationTimeLabel?.text = duration
-                }
-            })
-            .store(in: &cancellables)
+
+        //TODO: shoud replaced
+//        player.$didUpdateTime
+//            .receive(on: DispatchQueue.main)
+//            .sink(receiveValue: {[weak self] updatedTimeInfo in
+//                DispatchQueue.main.async {
+//                    guard let updatedTimeInfo = updatedTimeInfo else {return}
+//                    let currentTimeSeconds = updatedTimeInfo.2
+//                    let durationTimeSeconds =  updatedTimeInfo.3
+//                    let currentTime = updatedTimeInfo.0
+//                    let duration = updatedTimeInfo.1
+//                    self?.progressBar?.value = Float(currentTimeSeconds / durationTimeSeconds)
+//                    self?.currentTimeLabel?.text = currentTime
+//                    self?.durationTimeLabel?.text = duration
+//                }
+//            })
+//            .store(in: &cancellables)
                 
-        player.$pipModeStatus
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: {[weak self] status in
-                switch status {
-                case .start:
-                    self?.didStartPipMode()
-                case .end:
-                    
-                    self?.didEndPipMode()
-                case .restoreUserInterface:
-                    ()
-                    guard let complitionHandler =  self?.player.pipCompletionHandler else {return}
-                    self?.player(completionHandler: complitionHandler)
-                default: ()
-                }
-            })
-            .store(in: &cancellables)
+//        player.$pipModeStatus
+//            .receive(on: DispatchQueue.main)
+//            .sink(receiveValue: {[weak self] status in
+//                switch status {
+//                case .start:
+//                    self?.didStartPipMode()
+//                case .end:
+//                    
+//                    self?.didEndPipMode()
+//                case .restoreUserInterface:
+//                    ()
+//                    guard let complitionHandler =  self?.player.pipCompletionHandler else {return}
+//                    self?.player(completionHandler: complitionHandler)
+//                default: ()
+//                }
+//            })
+//            .store(in: &cancellables)
     }
 }
 

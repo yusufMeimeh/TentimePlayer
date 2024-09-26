@@ -46,3 +46,10 @@ protocol PipModeManaging: AnyObject {
     func startPipMode()
     func cleanUpObserver()
 }
+
+protocol TimeObserverManaging {
+    func startObserving(interval: CMTime)
+    func stopObserving()
+    var onTimeUpdate: ((TimeObservation) -> Void)? {get set}
+    func calculateTimeObservation(for time: CMTime) -> TimeObservation
+}
