@@ -154,8 +154,10 @@ extension TenTimePlayer {
 
     @discardableResult
     public func seekToBegin() -> TenTimePlayer {
+        let zeroTime = CMTimeMake(value: 0, timescale: 1)
         seekManager.seekToBeginning()
-        updatePlayerState(for: .zero)
+        updatePlayerState(for: zeroTime)
+        didFinishPlaying = false
         return self
     }
 

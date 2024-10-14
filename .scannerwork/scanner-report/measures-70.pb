@@ -1,7 +1,8 @@
-
-ncloc
-comment_lines
-classes
-	functions
+
+ncloc´
+comment_lines
 
-complexity
+classes
+	functions
+
+complexity
