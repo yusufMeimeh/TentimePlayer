@@ -9,7 +9,6 @@ import AVFoundation
 
 extension TenTimePlayer: PlayerItemDelegate {
     func playerItemManager(_ playerItemManager: any PlayerItemManaging, didUpdate isLoad: Bool) {
-        print("didUpdate  playerItemManager ", isLoad)
         self.isLoading = isLoad
 
         if !isLoad  {
