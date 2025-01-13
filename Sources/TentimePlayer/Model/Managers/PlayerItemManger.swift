@@ -55,6 +55,10 @@ class PlayerItemManager: NSObject, PlayerItemManaging {
 
     var subtitleOptions: [AVMediaSelectionOption]?
 
+    var duration: TimeInterval {
+        playerItem?.duration.seconds ?? 0
+    }
+
     func setupPlayerItem(with asset: AVURLAsset?) -> AVPlayerItem? {
         playerItem = initPlayerItem(with: asset)
         return playerItem

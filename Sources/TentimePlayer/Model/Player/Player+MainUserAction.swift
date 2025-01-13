@@ -87,6 +87,7 @@ extension TenTimePlayer {
                     self.notificationCenterManager.updateNowPlayableDynamicMetadata(isCurrentlyPlaying: autoPlay)
                     self.mediaPrepared = true
                     self.isCurrentlyPlaying = autoPlay
+                    self.duration = playerItem?.duration ?? 0
 
                 }
             case .failure(let failure):
@@ -184,6 +185,7 @@ extension TenTimePlayer {
     public func attachedToParent() -> Bool {
         playerLayer?.superlayer != nil
     }
+    
     @discardableResult
     public func startPipMode() -> TenTimePlayer {
         pipModeManager.startPipMode()

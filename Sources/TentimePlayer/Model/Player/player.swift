@@ -57,6 +57,8 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     @Published public var timeObservation: TimeObservation = TimeObservation()
 
+    @Published public var duration: TimeInterval = 0
+
     var remainingTime: Double = 0
 
     var isLoadingVideo: Bool = true
