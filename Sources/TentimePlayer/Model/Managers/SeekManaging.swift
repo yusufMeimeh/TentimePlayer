@@ -11,6 +11,7 @@ class SeekManager: SeekManaging {
     var isSeeking: Bool = false
     var supposedCurrentTime: CMTime?
     let player: AVPlayer
+
     init(supposedCurrentTime: CMTime? = nil, player: AVPlayer) {
         self.supposedCurrentTime = supposedCurrentTime
         self.player = player
@@ -18,9 +19,7 @@ class SeekManager: SeekManaging {
 
     public func seekToCurrentTime(delta: Int64) {
         self.isSeeking = true
-        guard let currentTime = supposedCurrentTime else {
-            return
-        }
+        let currentTime = supposedCurrentTime ?? player.currentTime()
 
         let secondsToSeek = CMTimeMake(value: delta, timescale: 1)
         let newTime = CMTimeAdd(currentTime, secondsToSeek)
@@ -42,6 +41,7 @@ class SeekManager: SeekManaging {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             self?.isSeeking = false
         }
+
 
     }
 

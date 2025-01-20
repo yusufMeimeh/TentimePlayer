@@ -87,8 +87,6 @@ extension TenTimePlayer {
                     self.notificationCenterManager.updateNowPlayableDynamicMetadata(isCurrentlyPlaying: autoPlay)
                     self.mediaPrepared = true
                     self.isCurrentlyPlaying = autoPlay
-                    self.duration = playerItem?.duration ?? 0
-
                 }
             case .failure(let failure):
                 //add handling error
@@ -113,11 +111,11 @@ extension TenTimePlayer {
     fileprivate func skipingHandle(_ delta: Int64) {
         let wasPlay = playbackManager.playbackStatus == .play
         if wasPlay {
-            playbackManager.pause()
+            playbackManager.forceStop()
         }
         seekManager.seekToCurrentTime(delta: delta)
-        self.handleProgresSeeking(finished: true,
-                                  wasPlay: wasPlay)
+        self.handleProgresSeeking(finished: true)
+    
     }
 
     @discardableResult
@@ -136,12 +134,11 @@ extension TenTimePlayer {
     public func seekByProgress(_ value: Float64) -> TenTimePlayer {
         let wasPlay = isCurrentlyPlaying
         if wasPlay {
-            playbackManager.pause()
+            playbackManager.forceStop()
         }
         seekManager.seek(to: value,
                          completion: { finished in
-            self.handleProgresSeeking(finished: finished,
-                                      wasPlay: wasPlay)
+            self.handleProgresSeeking(finished: finished)
         })
         return self
     }

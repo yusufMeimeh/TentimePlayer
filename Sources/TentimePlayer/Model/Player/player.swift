@@ -57,8 +57,6 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     @Published public var timeObservation: TimeObservation = TimeObservation()
 
-    @Published public var duration: TimeInterval = 0
-
     var remainingTime: Double = 0
 
     var isLoadingVideo: Bool = true
@@ -224,9 +222,13 @@ open class TenTimePlayer: NSObject, ObservableObject {
         print("end player step")
     }
 
-    internal func handleProgresSeeking(finished: Bool, wasPlay: Bool) {
+    internal func handleProgresSeeking(finished: Bool) {
         if finished, let supposedCurrentTime = seekManager.supposedCurrentTime {
             updatePlayerState(for: supposedCurrentTime)
+            //reset player to it's init state
+            if playbackManager.playbackStatus == .forceStop {
+                player.play()
+            }
         }
     }
 
@@ -238,7 +240,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
         guard let playerItem = player.currentItem
         else { return }
 
-        self.timeObservation =  timeObserverManager.calculateTimeObservation(for: time)
+        self.timeObservation = timeObserverManager.calculateTimeObservation(for: time)
         updateNotificationCenterData(time.seconds, playerItem)
     }
 
