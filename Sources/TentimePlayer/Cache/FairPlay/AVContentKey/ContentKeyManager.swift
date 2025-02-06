@@ -48,7 +48,8 @@ class ContentKeyManager: NSObject,  AVContentKeySessionDelegate {
     func handleOnlineContentKeyRequest(keyRequest: AVContentKeyRequest) {
         keyRetrivalStrategy = KeyRetrivalStrategyFactory.createKeyRetrivalStartegy(assetName: assetName, isOfflinePlayback: false, keyRequest: keyRequest, certifcateManager: certificateManager)
 
-        keyRetrivalStrategy.retriveKey { result in
+        keyRetrivalStrategy.retriveKey { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .success(let keyResponse):
                 guard let keyResponse = keyResponse else {return}
@@ -63,7 +64,8 @@ class ContentKeyManager: NSObject,  AVContentKeySessionDelegate {
         
         keyRetrivalStrategy = KeyRetrivalStrategyFactory.createKeyRetrivalStartegy(assetName: assetName, isOfflinePlayback: isOfflinePlayback, keyRequest: keyRequest, certifcateManager: certificateManager)
 
-        keyRetrivalStrategy.retriveKey { result in
+        keyRetrivalStrategy.retriveKey { [weak self] result in
+            guard let self else { return }
             switch result {
             case .success(let keyResponse):
                 guard let keyResponse = keyResponse else {return}

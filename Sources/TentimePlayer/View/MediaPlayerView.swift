@@ -192,7 +192,8 @@ public class MediaPlayerView: UIView {
     
     func requestIDFA() {
         if #available(iOS 14, *) {
-            ATTrackingManager.requestTrackingAuthorization(completionHandler: { status in
+            ATTrackingManager.requestTrackingAuthorization(completionHandler: { [weak self] status in
+                guard let self = self else { return }
                 // Tracking authorization completed. Start loading ads here.
                 // loadAd()
                 self.player.requestAds(view: self, viewController: self.findViewController())
@@ -276,8 +277,10 @@ public class MediaPlayerView: UIView {
             alertController.addAction(action)
         }
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {  _ in
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) {[weak self]  _ in
             // Dismiss the modal sheet without selecting any option
+            guard self != nil else { return }
+
             alertController.dismiss(animated: true, completion: nil)
         }
         alertController.addAction(cancelAction)
@@ -346,6 +349,7 @@ extension MediaPlayerView {
         if viewController.parent != nil {
             // Dismiss the view controller from its parent before using it in PiP mode
             viewController.dismiss(animated: true) { [weak self] in
+                guard self != nil else { return }
                 pipModeController = viewController
                 // Present the PiP mode controller here if needed
             }

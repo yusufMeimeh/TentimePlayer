@@ -27,7 +27,8 @@ class LoadManager: LoadManaging {
             name: playerData.movieName ?? "",
             url: url,
             isOfflinePlayback: false,
-            with: &keys) { result  in
+            with: &keys) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case .failure(let error):
                 print("Error loading media ", error)

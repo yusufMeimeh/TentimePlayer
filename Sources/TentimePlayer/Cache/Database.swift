@@ -15,7 +15,8 @@ class CoreDataManager {
     
     lazy var persistentContainer: NSPersistentContainer = {
         let container = NSPersistentContainer(name: "PlayerItem")
-        container.loadPersistentStores { (_, error) in
+        container.loadPersistentStores { [weak self] (_, error) in
+            guard let self = self else { return }
             if let error = error as NSError? {
                 fatalError("Unresolved error \(error), \(error.userInfo)")
             }

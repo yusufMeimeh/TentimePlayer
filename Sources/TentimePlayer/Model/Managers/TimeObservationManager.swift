@@ -44,13 +44,14 @@ class TimeObservationManager: TimeObserverManaging {
         let currentSeconds = time.seconds
         let durationSeconds = playerItem.duration.seconds
         let remainingSeconds = durationSeconds - currentSeconds
-
+        
         return TimeObservation(
             progressValue: Double(currentSeconds / durationSeconds),
             durationTimeFormatted: playerItem.duration.toDisplayString(),
             currentTimeFormatted: time.toDisplayString(),
             currentTimeSeconds: currentSeconds,
-            remainingTimeSeconds: remainingSeconds
+            remainingTimeSeconds: remainingSeconds,
+            durationTimeSeconds: durationSeconds
         )
     }
 

@@ -13,4 +13,5 @@ public struct TimeObservation: Equatable {
     public var currentTimeFormatted: String = "00:00"
     public var currentTimeSeconds: Double = 0.0
     public var remainingTimeSeconds: Double = 0.0
+    public var durationTimeSeconds: Double = 0.0
 }

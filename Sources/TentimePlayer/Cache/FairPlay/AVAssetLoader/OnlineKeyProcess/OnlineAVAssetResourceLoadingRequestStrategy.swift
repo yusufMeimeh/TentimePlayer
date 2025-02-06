@@ -39,7 +39,7 @@ struct OnlineAVAssetResourceLoadingRequestStrategy: KeyRetrivalStrategy {
             return
         }
 
-        contentKeyRequest.execute(spcData: spcData, contentId: contentId) { data in
+        contentKeyRequest.execute(spcData: spcData, contentId: contentId) {  data in
             guard let ckcData = data else {
                 completion(.failure(DrmError.noCKCReturnedByKSM))
                 loadingRequest.finishLoading(with: DrmError.cannotEncodeCKCData)
