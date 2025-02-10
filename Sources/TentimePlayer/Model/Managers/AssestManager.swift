@@ -20,7 +20,8 @@ class PlayerAssetManager: AssetManager {
         if !keys.contains(#keyPath(AVAsset.isPlayable)) {
             keys.append(#keyPath(AVAsset.isPlayable))
         }
-        asset.loadValuesAsynchronously(forKeys: keys) {
+        asset.loadValuesAsynchronously(forKeys: keys) { [weak self] in
+            guard let self = self else { return }
             var error: NSError? = nil
             let status = asset.statusOfValue(forKey: #keyPath(AVAsset.isPlayable), error: &error)
             switch status {

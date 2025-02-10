@@ -20,6 +20,7 @@ class TimeObservationManager: TimeObserverManaging {
     }
 
     func startObserving(interval: CMTime = CMTimeMake(value: 1, timescale: 2)) {
+        stopObserving()
         guard timeObserverToken == nil, !isSeeking else { return }
 
         timeObserverToken = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
@@ -56,7 +57,9 @@ class TimeObservationManager: TimeObserverManaging {
     }
 
     deinit {
-        stopObserving()
+        print("🛑 TimeObservationManager deallocated")
+        stopObserving() // ✅ Ensures observer is removed
     }
+
 }
 

@@ -62,7 +62,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
     var isLoadingVideo: Bool = true
 
     var isPipModeStarted: Bool {
-        return pipModeManager.isPipModeStarted
+        return pipModeManager?.isPipModeStarted ?? false
     }
     //Ads varibales
     var contentPlayhead: IMAAVPlayerContentPlayhead?
@@ -86,13 +86,13 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     internal var drmManager: DRMManager
     internal var playbackManager: PlaybackManaging
-    internal var loaderManager: LoadManaging
+    internal var loaderManager: LoadManaging?
     internal var notificationCenterManager: NotificationCenterManaging
     internal var seekManager: SeekManaging
-    internal var pipModeManager: PipModeManager
+    internal var pipModeManager: PipModeManager?
     var cancallable = Set<AnyCancellable>()
     internal var playerItemManager: PlayerItemManager?
-    internal var timeObserverManager: TimeObserverManaging
+    internal var timeObserverManager: TimeObserverManaging?
 
     override init() {
         self.drmManager = DRMManager()
@@ -121,8 +121,9 @@ open class TenTimePlayer: NSObject, ObservableObject {
     }
 
     private func observerPipStatus(){
+        guard let pipModeManager = pipModeManager else { return }
         bind(pipModeManager.$pipModeStatus,
-             to: handlePipMode,
+             to: { [weak self] status in self?.handlePipMode(status) },
              storeIn: &cancallable)
     }
 
@@ -132,16 +133,23 @@ open class TenTimePlayer: NSObject, ObservableObject {
     }
 
     func setupNotificationObservers() {
+        removeNotificationObservers()
         NotificationCenter.default.addObserver(self, selector: #selector(self.playerDidFinishPlaying), name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
     }
 
     func removeNotificationObservers() {
-
-        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player.currentItem)
+        if let currentItem = player.currentItem {
+            NotificationCenter.default.removeObserver(
+                self,
+                name: .AVPlayerItemDidPlayToEndTime,
+                object: currentItem // ✅ Removes observer only from the correct item
+            )
+        }
     }
 
+
     private func handlePipMode(_ status: PipModeStatus?) {
-        self.pipModeStatus = pipModeManager.pipModeStatus
+        self.pipModeStatus = pipModeManager?.pipModeStatus
         switch status {
         case .start:
             ()
@@ -193,8 +201,8 @@ open class TenTimePlayer: NSObject, ObservableObject {
     }
 
     func observePlayCurrentTime() {
-        timeObserverManager.startObserving(interval: CMTimeMake(value: 1, timescale: 2))
-        timeObserverManager.onTimeUpdate = {[weak self] timeObservation in
+        timeObserverManager?.startObserving(interval: CMTimeMake(value: 1, timescale: 2))
+        timeObserverManager?.onTimeUpdate = {[weak self] timeObservation in
             self?.timeObservation = timeObservation
         }
     }
@@ -205,20 +213,26 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     private func cleanUpObservers() {
         //remove player periodic observer
-        timeObserverManager.stopObserving()
+        timeObserverManager?.stopObserving()
     }
 
     public func endPlayer() {
         mediaPrepared = false
         playbackManager.pause()
 
-        notificationCenterManager.removeNotificationCenter()
         removeNotificationObservers()
-        cleanUpObservers()
+        notificationCenterManager.removeNotificationCenter()
 
         playerLayer?.removeFromSuperlayer()
         player.replaceCurrentItem(with: nil)
-        playerItemManager = nil
+//        playerItemManager?.removeObservers()
+        cancallable.forEach { $0.cancel() }
+         cancallable.removeAll()
+        cleanUpObservers()
+//        playerItemManager = nil
+//        loaderManager = nil
+//        timeObserverManager = nil
+//        pipModeManager = nil
         print("end player step")
     }
 
@@ -240,7 +254,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
         guard let playerItem = player.currentItem
         else { return }
 
-        self.timeObservation = timeObserverManager.calculateTimeObservation(for: time)
+        self.timeObservation = timeObserverManager?.calculateTimeObservation(for: time) ?? TimeObservation()
         updateNotificationCenterData(time.seconds, playerItem)
     }
 
@@ -252,7 +266,7 @@ open class TenTimePlayer: NSObject, ObservableObject {
 
     deinit {
         print("❌ TenTimeItemManagePlayer deallocated")
-        cleanUpObservers()
+        endPlayer()
     }
 
 }

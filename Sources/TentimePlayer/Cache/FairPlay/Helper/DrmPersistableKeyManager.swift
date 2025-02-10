@@ -19,7 +19,7 @@ struct DrmPersistableKeyManager: KeyManager {
     
     let fileManager: FileManaging
     let userDefaults: UserDefaultsManaging
-    var contentKeyDirectory: URL
+    let contentKeyDirectory: URL
     
     init(fileManager: FileManaging = DefaultFileManager(),
          userDefaults: UserDefaultsManaging = DefaultUserDefaults()) {

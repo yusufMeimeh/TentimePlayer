@@ -45,7 +45,7 @@ class AssetLoaderDeleagte: NSObject, AVAssetResourceLoaderDelegate {
        let loadingRequest = AVAssetResourceLoadingRequestWrapper(loadingRequest: loadingRequest)
        let keyRetirvalSrategy =  AVAssetLoaderRetrivalStrategyFactory.createKeyRetrivalStartegy(assetName: assetName, url: url, isOfflinePlayback: isOfflinePlayback, loadingRequest: loadingRequest, certifcateManager: certificateManager)
        keyRetirvalSrategy.retriveAVResourceLoaderKey { [weak self] result in
-           guard let self = self else { return }
+           guard let self else { return }
            switch result {
            case .success(let contentKey):
                print("Content key retrived Successfullyx")
@@ -58,9 +58,6 @@ class AssetLoaderDeleagte: NSObject, AVAssetResourceLoaderDelegate {
        return true
        
     }
-    
-    
-    
   
 }
 

@@ -184,7 +184,10 @@ class PlayerItemManager: NSObject, PlayerItemManaging {
     func removeObservers() {
         //remove all observers
         NotificationCenter.default.removeObserver(self,
-                                                  name: nil,
+                                                  name: NSNotification.Name.AVPlayerItemPlaybackStalled,
+                                                  object: playerItem)
+        NotificationCenter.default.removeObserver(self,
+                                                  name: NSNotification.Name.AVPlayerItemPlaybackStalled,
                                                   object: playerItem)
 
         observableAttributes.forEach { item in
@@ -194,7 +197,6 @@ class PlayerItemManager: NSObject, PlayerItemManaging {
 
     deinit {
         print("❌ TenTimeItemManagePlayer deallocated")
-        removeObservers()
     }
 }
 

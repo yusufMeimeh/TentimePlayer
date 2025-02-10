@@ -10,6 +10,7 @@ import GoogleInteractiveMediaAds
 
 extension TenTimePlayer {
     open func setUpAdsLoader() {
+        guard let pipModeManager = pipModeManager else { return }
         pipModeManager.pictureInPictureProxy = IMAPictureInPictureProxy(avPictureInPictureControllerDelegate: pipModeManager)
 
         if pipModeManager.pictureInPictureController != nil {
@@ -26,6 +27,7 @@ extension TenTimePlayer {
       }
 
     open  func requestAds(view: UIView, viewController: UIViewController?) {
+        guard let pipModeManager = pipModeManager else { return }
        // Create ad display container for ad rendering.
         guard let pictureInPictureProxy = pipModeManager.pictureInPictureProxy else {return}
        let adDisplayContainer = IMAAdDisplayContainer(adContainer: view, viewController: viewController)
@@ -61,6 +63,8 @@ extension TenTimePlayer: IMAAdsLoaderDelegate {
 // MARK: - IMAAdsManagerDelegate
 extension TenTimePlayer: IMAAdsManagerDelegate {
     open   func adsManager(_ adsManager: IMAAdsManager, didReceive event: IMAAdEvent) {
+        guard let pipModeManager = pipModeManager else { return }
+
         switch event.type {
         case .LOADED:
             if pipModeManager.pictureInPictureController == nil

@@ -13,6 +13,7 @@ class LoadManager: LoadManaging {
     init(player: AVPlayer) {
         self.player = player
     }
+    let playerAssetManager = ManagerFactory.createAssetLoadManager()
 
     public func loadMedia(from playerData: PlayerData,
                            completion: (@escaping  (Result<PlayerItemManager?, Error>) -> Void)) {
@@ -20,7 +21,6 @@ class LoadManager: LoadManaging {
 //        isCurrentlyPlaying = autoPlay
         guard let url = URL(string: playerData.moviePath) else {return}
 
-        let playerAssetManager = ManagerFactory.createAssetLoadManager()
 
         var keys: [String] = []
         playerAssetManager.loadAsset(

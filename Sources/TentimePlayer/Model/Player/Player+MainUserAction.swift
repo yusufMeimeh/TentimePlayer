@@ -71,7 +71,7 @@ extension TenTimePlayer {
                                 autoPlay: Bool = false,
                                 mute: Bool = false) -> TenTimePlayer {
         self.playerData = playerData
-        loaderManager.loadMedia(from: playerData) {[weak self] (result: Result<PlayerItemManager?,Error>) in
+        loaderManager?.loadMedia(from: playerData) {[weak self] (result: Result<PlayerItemManager?,Error>) in
             guard let self = self else {return}
             switch result {
             case .success(let playerItem):
@@ -169,7 +169,7 @@ extension TenTimePlayer {
         playerLayer?.videoGravity = .resizeAspectFill
         view.layer.addSublayer(playerLayer!)
         if enablePipMode {
-            pipModeManager.setupPipMode(playerLayer: playerLayer!)
+            pipModeManager?.setupPipMode(playerLayer: playerLayer!)
         }
         return self
     }
@@ -185,7 +185,7 @@ extension TenTimePlayer {
     
     @discardableResult
     public func startPipMode() -> TenTimePlayer {
-        pipModeManager.startPipMode()
+        pipModeManager?.startPipMode()
         return self
     }
 
